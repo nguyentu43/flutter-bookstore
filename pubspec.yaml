@@ -37,6 +37,8 @@ dependencies:
   ferry: #[latest-version]
   gql_http_link: #[latest-version]
   form_validator: #[lasted-version]
+  device_preview: #[lasted-version]
+
 
 dev_dependencies:
   flutter_test:

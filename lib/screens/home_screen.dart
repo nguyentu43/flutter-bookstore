@@ -49,7 +49,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
         drawer: Drawer(
             child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -94,6 +95,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         body: TabBarView(
           controller: _tabController,
           children: tabs.map((e) => e.child).toList(),
-        ));
+        ),
+      ),
+    );
   }
 }
