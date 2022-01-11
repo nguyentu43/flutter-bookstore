@@ -1,0 +1,203 @@
+"""Exposes a URL that specifies the behaviour of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behaviour of this scalar."""
+  url: String!
+) on SCALAR
+
+type Author {
+  id: ID!
+  name: String!
+  avatar: String
+  description: String
+  books: Int
+}
+
+input AuthorData {
+  name: String
+  avatar: String
+  description: String
+}
+
+input CartItemData {
+  quantity: Int!
+  id: ID!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  children: [Category]
+  icon: String
+  parent: Category
+}
+
+input CategoryData {
+  name: String
+  parentID: ID
+  icon: String
+}
+
+type Image {
+  public_id: String!
+  secure_url: String!
+}
+
+type ImageList {
+  list: [Image]
+  next_cursor: String
+}
+
+type Mutation {
+  register(input: RegisterData!): String!
+  addUser(input: UserData!): User!
+  updateUser(id: ID!, input: UserData!): User!
+  removeUser(id: ID!): Boolean
+  requestResetPassword(email: String!): String
+  verifyTokenAndResetPassword(token: String!, password: String!): String
+  addAuthor(input: AuthorData): Author
+  updateAuthor(id: ID, input: AuthorData): Author
+  removeAuthor(id: ID): Boolean
+  addCategory(input: CategoryData): Category
+  updateCategory(id: ID, input: CategoryData): Category
+  removeCategory(id: ID): Boolean
+  addProduct(input: ProductData!): Product!
+  updateProduct(id: ID!, input: ProductData!): Product!
+  removeProduct(id: ID!): Boolean!
+  addCartItem(input: CartItemData!): [ProductItem!]
+  removeCartItem(productID: ID!): [ProductItem!]
+  checkout(input: OrderData!): Order!
+  addOrder(input: OrderData!, userID: ID): Order!
+  updateOrder(id: ID!, input: OrderData!, userID: ID): Order!
+  removeOrder(id: ID!): Boolean!
+  uploadImages(files: [Upload!], urls: String): [Image]
+  removeImages(public_ids: [String!]): Boolean
+  addWishlist(id: ID): Boolean
+  removeWishlist(id: ID): Boolean
+  addRating(input: RatingData, userID: ID!, productID: ID!): Rating
+  updateRating(input: RatingData, userID: ID!, id: ID!): Rating
+  removeRating(id: ID!): Boolean
+}
+
+type Order {
+  id: ID!
+  name: String!
+  status: String!
+  address: String!
+  phone: String!
+  total: Float!
+  createdAt: String!
+  updatedAt: String!
+  user: User
+  paymentID: String
+  items: [ProductItem!]
+}
+
+input OrderData {
+  name: String!
+  address: String!
+  status: String
+  items: [OrderItemData]!
+  paymentID: String
+  phone: String!
+  total: Float!
+}
+
+input OrderItemData {
+  quantity: Int!
+  price: Float!
+  discount: Float!
+  id: ID!
+}
+
+type Product {
+  id: ID!
+  name: String!
+  price: Float!
+  discount: Float
+  description: String
+  slug: String!
+  images: [Image]
+  authors: [Author]
+  ratings: [Rating]
+  category: Category
+  createdAt: String!
+  updatedAt: String!
+}
+
+input ProductData {
+  name: String!
+  price: Float!
+  discount: Float!
+  description: String
+  images: String
+  authors: [ID]
+  category: ID
+}
+
+type ProductItem {
+  id: ID!
+  name: String!
+  price: Float!
+  slug: String!
+  discount: Float!
+  quantity: Int!
+  images: [Image]
+}
+
+type Query {
+  login(email: String!, password: String!): String!
+  loginWithProvider(email: String!, name: String!): String!
+  getImages(cursor: String): ImageList
+  getCategories: [Category]!
+  getAuthors: [Author]!
+  getProduct(slug: String!): Product
+  getRecommendationProducts(offset: Int, limit: Int): [Product]!
+  getProducts(search: String, offset: Int, limit: Int): [Product]!
+  getPaymentCode(total: Int!, currency: String): String!
+  getUserInfo: User!
+  getUserCart: [ProductItem!]
+  getUserOrders: [Order]!
+  getWishlist: [Product]
+  getOrders: [Order]!
+  getUsers: [User]!
+  getDashboardData(year: Int): String!
+}
+
+type Rating {
+  id: ID!
+  title: String!
+  comment: String!
+  user: User!
+  rate: Int!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input RatingData {
+  title: String
+  comment: String
+  rate: Int
+}
+
+input RegisterData {
+  name: String!
+  email: String!
+  password: String!
+}
+
+scalar Upload
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  isAdmin: Boolean!
+}
+
+input UserData {
+  name: String!
+  email: String!
+  password: String
+  isAdmin: Boolean
+}
+
