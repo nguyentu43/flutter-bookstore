@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 class CategoryItem extends StatelessWidget {
   final double right;
-  const CategoryItem({Key? key, this.right = 10.0}) : super(key: key);
+  final String name;
+  final String id;
+  const CategoryItem(
+      {Key? key, required this.name, required this.id, this.right = 10.0})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -19,7 +23,7 @@ class CategoryItem extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          Text("Children",
+          Text(name,
               style: textTheme.headline5?.merge(TextStyle(color: Colors.white)))
         ],
       ),

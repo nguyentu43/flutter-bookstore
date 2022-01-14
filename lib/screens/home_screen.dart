@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
+import 'package:flutter_bookstore/widgets/tabs/account_tab.dart';
 import 'package:flutter_bookstore/widgets/tabs/home_tab.dart';
+import 'package:flutter_bookstore/widgets/tabs/orders_tab.dart';
+import 'package:flutter_bookstore/widgets/tabs/search_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -22,9 +26,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   final tabs = <_TabItem>[
     _TabItem(child: HomeTab(), icon: Icons.home, text: 'Home'),
-    _TabItem(child: Text('search'), icon: Icons.search, text: 'Search'),
-    _TabItem(child: Text('orders'), icon: Icons.list_alt, text: 'Orders'),
-    _TabItem(child: Text('account'), icon: Icons.person, text: 'My Account'),
+    _TabItem(child: SearchTab(), icon: Icons.search, text: 'Search'),
+    _TabItem(child: OrdersTab(), icon: Icons.list_alt, text: 'Orders'),
+    _TabItem(child: AccountTab(), icon: Icons.person, text: 'My Account'),
   ];
 
   void selectTab(int index) {
@@ -37,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: tabs.length, vsync: this);
+    _tabController = TabController(
+        length: tabs.length, vsync: this, initialIndex: currentIndex);
   }
 
   @override
@@ -53,19 +58,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Scaffold(
         drawer: Drawer(
             child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Categories", style: textTheme.headline2),
-              Text("Category", style: textTheme.headline4),
-              Text("Category", style: textTheme.headline4),
-              Text("Category", style: textTheme.headline4),
-              Text("Category", style: textTheme.headline4),
-              Text("Category", style: textTheme.headline4),
-            ],
-          ),
-        )),
+                padding: const EdgeInsets.all(10.0),
+                child: ListView.builder(
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Text("Categories",
+                          style: textTheme.headline3
+                              ?.merge(TextStyle(fontWeight: FontWeight.bold)));
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Text("Category", style: textTheme.headline5),
+                    );
+                  },
+                  itemCount: 10,
+                ))),
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           child: Container(
@@ -90,7 +97,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.shopping_cart),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pushNamed(MainRoute.cart);
+          },
         ),
         body: TabBarView(
           controller: _tabController,

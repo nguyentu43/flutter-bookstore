@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-enum TypeBackground { left, center, right }
+enum BackgroundType { left, center, right }
 
 class Background extends StatelessWidget {
   final Widget child;
-  final TypeBackground type;
+  final BackgroundType type;
   final double opacity;
   const Background(
       {Key? key,
       this.opacity = 1,
       required this.child,
-      this.type = TypeBackground.center})
+      this.type = BackgroundType.center})
       : super(key: key);
 
   @override

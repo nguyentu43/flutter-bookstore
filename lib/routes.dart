@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/screens/cart_screen.dart';
 import 'package:flutter_bookstore/screens/home_screen.dart';
 import 'package:flutter_bookstore/screens/login_screen.dart';
 import 'package:flutter_bookstore/screens/register_screen.dart';
 
 class MainRoute {
   static const home = '/';
+  static const cart = '/cart';
   static const login = '/login';
   static const register = '/register';
 
@@ -13,6 +15,8 @@ class MainRoute {
     switch (setting.name) {
       case home:
         return MaterialPageRoute(builder: (_) => HomeScreen());
+      case cart:
+        return MaterialPageRoute(builder: (_) => CartScreen());
       case login:
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case register:

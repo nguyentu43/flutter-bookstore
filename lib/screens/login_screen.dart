@@ -1,4 +1,9 @@
+import 'package:cool_alert/cool_alert.dart';
+import 'package:ferry/ferry.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/graphql/client.dart';
+import 'package:flutter_bookstore/graphql/queries/login.req.gql.dart';
+import 'package:flutter_bookstore/helpers/data_store.dart';
 import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
@@ -14,15 +19,24 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _emailTextController = TextEditingController();
+  final _emailTextController = TextEditingController(text: "admin@example.com");
 
-  final _passwordTextController = TextEditingController();
+  final _passwordTextController = TextEditingController(text: "12345678");
 
-  void processLogin() {
+  void processLogin(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Processing Data ${_emailTextController.text}")),
-      );
+      CoolAlert.show(context: context, type: CoolAlertType.loading);
+      client
+          .request(GLoginReq((b) => b
+            ..vars.email = _emailTextController.text
+            ..vars.password = _passwordTextController.text))
+          .listen((response) async {
+        Navigator.of(context).pop();
+        if (!response.hasErrors) {
+          await dataStore.put("token", "jhjhj");
+          Navigator.of(context).popAndPushNamed(MainRoute.home);
+        }
+      });
     }
   }
 
@@ -48,7 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Online Bookstore", style: textTheme.headline1),
+              Text("Online Bookstore",
+                  style: textTheme.headline1
+                      ?.merge(TextStyle(fontWeight: FontWeight.bold))),
               SizedBox(
                 height: 15,
               ),
@@ -64,7 +80,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           .required()
                           .build(),
                       decoration: InputDecoration(
-                          label: Text("Email"), border: OutlineInputBorder()),
+                          label: Text("Email", style: textTheme.subtitle1),
+                          border: OutlineInputBorder()),
                     ),
                     SizedBox(
                       height: 10,
@@ -75,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       validator:
                           ValidationBuilder().maxLength(50).required().build(),
                       decoration: InputDecoration(
-                          label: Text("Password"),
+                          label: Text("Password", style: textTheme.subtitle1),
                           border: OutlineInputBorder()),
                     )
                   ],
@@ -90,8 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   style:
                       textTheme.button?.merge(TextStyle(color: Colors.white)),
                 ),
-                onPressed: processLogin,
-                backgroundColor: Colors.orangeAccent,
+                onPressed: () => processLogin(context),
+                backgroundColor: Colors.blue,
               ),
               SizedBox(
                 height: 10,

@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/widgets/components/move_to_single_book_screen.dart';
 
 class LaidBookItem extends StatelessWidget {
-  const LaidBookItem({Key? key, this.right = 10.0}) : super(key: key);
+  const LaidBookItem(
+      {Key? key,
+      required this.image,
+      required this.discount,
+      required this.id,
+      required this.slug,
+      required this.name,
+      this.right = 10.0})
+      : super(key: key);
   final double right;
+  final String image;
+  final double discount;
+  final String id;
+  final String slug;
+  final String name;
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: EdgeInsets.only(right: right),
+    return Container(
+      width: 180,
+      margin: EdgeInsets.only(right: right),
       child: Column(
         children: [
           Expanded(
@@ -22,32 +37,44 @@ class LaidBookItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10.0),
                       color: Colors.blue[100]),
                 )),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 15.0),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10.0),
-                        child: Image.network(
-                          'https://res.cloudinary.com/dqwgxcnh7/image/upload/q_auto:good/v1/store/cvk4ph51t2x1hunpb6sk',
+                MoveToSingleBookScreen(
+                  slug: slug,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            image,
+                          ),
                         ),
-                      ),
-                      Positioned(
-                          bottom: 5.0,
-                          right: 5.0,
-                          child: Chip(
-                            label: Text("9%",
-                                style: textTheme.caption
-                                    ?.merge(TextStyle(color: Colors.white))),
-                            backgroundColor: Colors.orange,
-                          ))
-                    ],
+                        if (discount > 0.0)
+                          Positioned(
+                              bottom: 5.0,
+                              right: 5.0,
+                              child: Chip(
+                                label: Text(
+                                    "${(discount * 100).toStringAsFixed(1)}%",
+                                    style: textTheme.caption?.merge(
+                                        TextStyle(color: Colors.white))),
+                                backgroundColor: Colors.orange,
+                              ))
+                      ],
+                    ),
                   ),
                 )
               ],
             ),
           ),
-          Text("Book", style: textTheme.headline6)
+          Padding(
+            padding: const EdgeInsets.only(top: 5.0),
+            child: Text(
+              name,
+              style: textTheme.headline6,
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
         ],
       ),
     );

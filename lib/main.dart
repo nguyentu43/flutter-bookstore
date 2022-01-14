@@ -1,17 +1,35 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bookstore/helpers/CustomScrollBehavior.dart';
+import 'package:flutter_bookstore/helpers/custom_scroll_behavior.dart';
 import 'package:flutter_bookstore/routes.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_bookstore/.env.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
-  // runApp(
-  //   DevicePreview(
-  //     enabled: !kReleaseMode,
-  //     builder: (context) => MyApp(), // Wrap your app
-  //   ),
-  // );
-  runApp(const MyApp());
+void main() async {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter();
+    await Hive.openBox('bookstore');
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      exit(1);
+    };
+    // runApp(
+    //   DevicePreview(
+    //     enabled: !kReleaseMode,
+    //     builder: (context) => MyApp(), // Wrap your app
+    //   ),
+    // );
+    Stripe.publishableKey = kStripeApiPk;
+    runApp(const MyApp());
+  }, (Object error, StackTrace stack) {
+    exit(1);
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -41,6 +59,13 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: MainRoute.onGenerateRoute,
         initialRoute: MainRoute.home,
         debugShowCheckedModeBanner: false,
+        builder: (context, widget) {
+          Widget error = Text('...rendering error...');
+          if (widget is Scaffold || widget is Navigator)
+            error = Scaffold(body: Center(child: error));
+          ErrorWidget.builder = (FlutterErrorDetails errorDetails) => error;
+          return widget!;
+        },
         scrollBehavior: CustomScrollBehavior());
   }
 }

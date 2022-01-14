@@ -37,77 +37,83 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
         body: Background(
+            type: BackgroundType.center,
             child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                "Register a new account",
-                style: textTheme.headline1,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                      child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        "Register a new account",
+                        style: textTheme.headline1,
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _fullnameTextController,
+                              validator: ValidationBuilder()
+                                  .maxLength(50)
+                                  .required()
+                                  .build(),
+                              decoration: InputDecoration(
+                                  label: Text("Fullname"),
+                                  border: OutlineInputBorder()),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _emailTextController,
+                              validator: ValidationBuilder()
+                                  .email()
+                                  .maxLength(50)
+                                  .required()
+                                  .build(),
+                              decoration: InputDecoration(
+                                  label: Text("Email"),
+                                  border: OutlineInputBorder()),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: _passwordTextController,
+                              obscureText: true,
+                              validator: ValidationBuilder()
+                                  .maxLength(50)
+                                  .required()
+                                  .build(),
+                              decoration: InputDecoration(
+                                  label: Text("Password"),
+                                  border: OutlineInputBorder()),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      RoundedButton(
+                        child: Text(
+                          "Register",
+                          style: textTheme.button
+                              ?.merge(TextStyle(color: Colors.white)),
+                        ),
+                        onPressed: processLogin,
+                        backgroundColor: Colors.green,
+                      )
+                    ],
+                  ))
+                ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _fullnameTextController,
-                      validator:
-                          ValidationBuilder().maxLength(50).required().build(),
-                      decoration: InputDecoration(
-                          label: Text("Fullname"),
-                          border: OutlineInputBorder()),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextFormField(
-                      controller: _emailTextController,
-                      validator: ValidationBuilder()
-                          .email()
-                          .maxLength(50)
-                          .required()
-                          .build(),
-                      decoration: InputDecoration(
-                          label: Text("Email"), border: OutlineInputBorder()),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TextFormField(
-                      controller: _passwordTextController,
-                      obscureText: true,
-                      validator:
-                          ValidationBuilder().maxLength(50).required().build(),
-                      decoration: InputDecoration(
-                          label: Text("Password"),
-                          border: OutlineInputBorder()),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(height: 10),
-              RoundedButton(
-                child: Text(
-                  "Register",
-                  style:
-                      textTheme.button?.merge(TextStyle(color: Colors.white)),
-                ),
-                onPressed: processLogin,
-                backgroundColor: Colors.green,
-              )
-            ],
-          ))
-        ],
-      ),
-    )));
+            )));
   }
 }

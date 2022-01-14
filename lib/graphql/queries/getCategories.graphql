@@ -1,0 +1,1 @@
+query GetCategories{categories: getCategories{id, name, icon, children{id, name, icon, children{id}}, parent{id, name}}}
