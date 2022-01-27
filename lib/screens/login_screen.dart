@@ -3,7 +3,8 @@ import 'package:ferry/ferry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/queries/login.req.gql.dart';
-import 'package:flutter_bookstore/helpers/data_store.dart';
+import 'package:flutter_bookstore/helpers/app_service.dart';
+import 'package:flutter_bookstore/helpers/secure_storage.dart';
 import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
@@ -23,18 +24,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _passwordTextController = TextEditingController(text: "12345678");
 
-  void processLogin(BuildContext context) {
+  void _processLogin(BuildContext context) {
     if (_formKey.currentState!.validate()) {
       CoolAlert.show(context: context, type: CoolAlertType.loading);
-      client
+      AppService()
+          .client
           .request(GLoginReq((b) => b
             ..vars.email = _emailTextController.text
             ..vars.password = _passwordTextController.text))
           .listen((response) async {
         Navigator.of(context).pop();
         if (!response.hasErrors) {
-          await dataStore.put("token", "jhjhj");
-          Navigator.of(context).popAndPushNamed(MainRoute.home);
+          await secureStorage.write(key: "token", value: response.data!.token);
         }
       });
     }
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
         body: Background(
             child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -62,10 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text("Online Bookstore",
-                  style: textTheme.headline1
-                      ?.merge(TextStyle(fontWeight: FontWeight.bold))),
-              SizedBox(
+              Text("Online Bookstore", style: textTheme.headline1),
+              const SizedBox(
                 height: 15,
               ),
               Form(
@@ -81,9 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           .build(),
                       decoration: InputDecoration(
                           label: Text("Email", style: textTheme.subtitle1),
-                          border: OutlineInputBorder()),
+                          border: const OutlineInputBorder()),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     TextFormField(
@@ -93,41 +92,41 @@ class _LoginScreenState extends State<LoginScreen> {
                           ValidationBuilder().maxLength(50).required().build(),
                       decoration: InputDecoration(
                           label: Text("Password", style: textTheme.subtitle1),
-                          border: OutlineInputBorder()),
+                          border: const OutlineInputBorder()),
                     )
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RoundedButton(
                 child: Text(
                   "Login",
-                  style:
-                      textTheme.button?.merge(TextStyle(color: Colors.white)),
+                  style: textTheme.button
+                      ?.merge(const TextStyle(color: Colors.white)),
                 ),
-                onPressed: () => processLogin(context),
+                onPressed: () => _processLogin(context),
                 backgroundColor: Colors.blue,
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               RoundedButton(
                 child: Text(
                   "Login with Google",
-                  style:
-                      textTheme.button?.merge(TextStyle(color: Colors.white)),
+                  style: textTheme.button
+                      ?.merge(const TextStyle(color: Colors.white)),
                 ),
                 onPressed: () {},
                 backgroundColor: Colors.redAccent,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               RoundedButton(
                 child: Text(
                   "Register",
-                  style:
-                      textTheme.button?.merge(TextStyle(color: Colors.white)),
+                  style: textTheme.button
+                      ?.merge(const TextStyle(color: Colors.white)),
                 ),
                 onPressed: () {
                   Navigator.of(context).pushNamed(MainRoute.register);

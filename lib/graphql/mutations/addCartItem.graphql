@@ -1,0 +1,1 @@
+mutation AddCartItem($input: CartItemData!){cart: addCartItem(input: $input){id, name, price, slug, discount, quantity, images{secure_url}}}

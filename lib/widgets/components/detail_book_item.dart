@@ -34,19 +34,21 @@ class DetailBookItem extends StatelessWidget {
                     slug: "", child: Text("Book", style: textTheme.headline5)),
                 Text("Author", style: textTheme.subtitle1),
                 Text("\$ 10.99", style: textTheme.headline5),
-                Spacer(),
+                const Spacer(),
                 Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(right: 10.0),
                       child: RoundedButton(
-                        child: Icon(Icons.add_shopping_cart),
+                        child: const Icon(Icons.add_shopping_cart,
+                            color: Colors.white),
                         onPressed: () {},
                       ),
                     ),
                     RoundedButton(
                       backgroundColor: Colors.pink,
-                      child: Icon(Icons.favorite_outline),
+                      child: const Icon(Icons.favorite_outline,
+                          color: Colors.white),
                       onPressed: () {},
                     )
                   ],

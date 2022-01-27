@@ -40,14 +40,15 @@ dependencies:
   flutter_spinbox: ^0.8.0
   flutter_stripe: ^2.1.1
   flutter_stripe_web: #[lasted-version]
-  hive: ^2.0.5
-  hive_flutter: ^1.1.0
   single: ^1.0.2
   cool_alert: ^1.1.0
   bloc: ^8.0.2
   flutter_bloc: ^8.0.1
   dropdown_search: ^2.0.1
   flutter_html: ^2.2.1
+  infinite_scroll_pagination: ^3.1.0
+  flutter_secure_storage: ^5.0.2
+  singleton: 0.0.3-nullsafety
 
 dev_dependencies:
   flutter_test:

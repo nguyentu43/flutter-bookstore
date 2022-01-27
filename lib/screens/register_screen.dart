@@ -1,4 +1,8 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/graphql/mutations/register.req.gql.dart';
+import 'package:flutter_bookstore/helpers/app_service.dart';
+import 'package:flutter_bookstore/helpers/secure_storage.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 import 'package:form_validator/form_validator.dart';
@@ -17,11 +21,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _fullnameTextController = TextEditingController();
   final _passwordTextController = TextEditingController();
 
-  void processLogin() {
+  void _processRegister(context) {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Processing Data ${_emailTextController.text}")),
-      );
+      CoolAlert.show(context: context, type: CoolAlertType.loading);
+      AppService()
+          .client
+          .request(GRegisterReq((b) => b
+            ..vars.input.email = _emailTextController.text
+            ..vars.input.name = _fullnameTextController.text
+            ..vars.input.password = _passwordTextController.text))
+          .listen((response) async {
+        if (!response.loading) {
+          if (!response.hasErrors) {
+            await secureStorage.write(
+                key: "token", value: response.data!.token);
+          } else {
+            CoolAlert.show(
+                context: context,
+                type: CoolAlertType.error,
+                text: response.graphqlErrors!.first.message);
+          }
+        }
+      });
     }
   }
 
@@ -39,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body: Background(
             type: BackgroundType.center,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -107,7 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: textTheme.button
                               ?.merge(TextStyle(color: Colors.white)),
                         ),
-                        onPressed: processLogin,
+                        onPressed: () => _processRegister(context),
                         backgroundColor: Colors.green,
                       )
                     ],

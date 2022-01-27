@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bookstore/widgets/components/book_item.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
+import 'package:flutter_bookstore/widgets/components/top_bar.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:form_validator/form_validator.dart';
@@ -15,13 +16,11 @@ class CartScreen extends StatelessWidget {
       body: ListView.separated(
           itemBuilder: (context, index) {
             if (index == 0) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [Text("CART", style: textTheme.headline2)],
-                ),
-              );
+              return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  child: TopBar(
+                    headerText: "CART",
+                  ));
             }
 
             if (index == 9) {
@@ -31,12 +30,14 @@ class CartScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text("Total:\$ 99.99",
-                        style: textTheme.headline2
-                            ?.merge(TextStyle(fontWeight: FontWeight.bold))),
+                        style: textTheme.headline2?.merge(
+                            const TextStyle(fontWeight: FontWeight.bold))),
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: RoundedButton(
-                        child: Text("Checkout"),
+                        child: Text("Checkout",
+                            style: textTheme.button!
+                                .merge(TextStyle(color: Colors.white))),
                         backgroundColor: Colors.green,
                         onPressed: () {
                           Scaffold.of(context)
@@ -45,13 +46,13 @@ class CartScreen extends StatelessWidget {
                                         color: Colors.white,
                                         border: Border.all(
                                             width: 1.0, color: Colors.grey),
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(10.0),
                                             topRight: Radius.circular(10.0))),
                                     height: 380,
                                     width: double.infinity,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(10.0),
                                       child: _CheckoutForm(),
                                     ),
                                   ));
@@ -65,15 +66,20 @@ class CartScreen extends StatelessWidget {
 
             return Container(
               height: 150,
-              margin: EdgeInsets.all(10.0),
+              margin: const EdgeInsets.all(10.0),
               child: Row(
                 children: [
                   SizedBox(width: 40, child: Text(index.toString())),
                   // BookItem(),
                   Expanded(child: Text("Book", style: textTheme.headline6)),
-                  SizedBox(width: 100, child: SpinBox()),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                  SizedBox(
+                      width: 100,
+                      child: SpinBox(
+                        value: 1,
+                        min: 1,
+                      )),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10.0),
                     child: RoundedButton(
                       child: Icon(
                         Icons.delete,
@@ -87,7 +93,7 @@ class CartScreen extends StatelessWidget {
             );
           },
           separatorBuilder: (context, index) {
-            return Divider(
+            return const Divider(
               height: 1.0,
             );
           },
@@ -112,7 +118,7 @@ class _CheckoutFormState extends State<_CheckoutForm> {
   final _cardEditController = CardEditController();
   final _formState = GlobalKey<FormState>();
 
-  String? errorCardFieldText = null;
+  String? errorCardFieldText;
 
   @override
   void dispose() {
@@ -135,22 +141,23 @@ class _CheckoutFormState extends State<_CheckoutForm> {
           TextFormField(
               validator: ValidationBuilder().required().build(),
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   label: Text("Fullname", style: textTheme.subtitle1))),
           TextFormField(
               validator: ValidationBuilder().required().phone().build(),
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   label: Text("Phone", style: textTheme.subtitle1))),
           TextFormField(
               validator: ValidationBuilder().required().build(),
               decoration: InputDecoration(
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   label: Text("Address", style: textTheme.subtitle1))),
           CardField(
             controller: _cardEditController,
             decoration: InputDecoration(
-                errorText: errorCardFieldText, border: OutlineInputBorder()),
+                errorText: errorCardFieldText,
+                border: const OutlineInputBorder()),
           ),
           Row(
             children: [
@@ -169,8 +176,8 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                 },
                 child: Text(
                   "Confirm",
-                  style:
-                      textTheme.button?.merge(TextStyle(color: Colors.white)),
+                  style: textTheme.button
+                      ?.merge(const TextStyle(color: Colors.white)),
                 ),
                 backgroundColor: Colors.green,
               ),
@@ -182,8 +189,8 @@ class _CheckoutFormState extends State<_CheckoutForm> {
                   },
                   child: Text(
                     "Cancel",
-                    style:
-                        textTheme.button?.merge(TextStyle(color: Colors.white)),
+                    style: textTheme.button
+                        ?.merge(const TextStyle(color: Colors.white)),
                   ),
                   backgroundColor: Colors.red,
                 ),

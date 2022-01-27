@@ -5,8 +5,12 @@ class NotFoundScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("not found"),
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Text("Not Found"),
+        ),
+      ),
     );
   }
 }

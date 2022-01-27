@@ -1,0 +1,1 @@
+query GetUserOrders {orders: getUserOrders{id, name, address, total, status,  phone, createdAt, items{id, name, slug ,price, discount, quantity, images{secure_url}}}}

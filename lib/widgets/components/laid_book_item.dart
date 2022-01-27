@@ -57,7 +57,7 @@ class LaidBookItem extends StatelessWidget {
                                 label: Text(
                                     "${(discount * 100).toStringAsFixed(1)}%",
                                     style: textTheme.caption?.merge(
-                                        TextStyle(color: Colors.white))),
+                                        const TextStyle(color: Colors.white))),
                                 backgroundColor: Colors.orange,
                               ))
                       ],

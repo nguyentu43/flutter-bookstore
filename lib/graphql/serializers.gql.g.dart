@@ -7,6 +7,11 @@ part of 'serializers.gql.dart';
 // **************************************************************************
 
 Serializers _$serializers = (new Serializers().toBuilder()
+      ..add(GAddCartItemData.serializer)
+      ..add(GAddCartItemData_cart.serializer)
+      ..add(GAddCartItemData_cart_images.serializer)
+      ..add(GAddCartItemReq.serializer)
+      ..add(GAddCartItemVars.serializer)
       ..add(GAuthorData.serializer)
       ..add(GCartItemData.serializer)
       ..add(GCategoryData.serializer)
@@ -37,6 +42,28 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(GGetProductsData_products_images.serializer)
       ..add(GGetProductsReq.serializer)
       ..add(GGetProductsVars.serializer)
+      ..add(GGetRecommentProductsData.serializer)
+      ..add(GGetRecommentProductsData_products.serializer)
+      ..add(GGetRecommentProductsData_products_authors.serializer)
+      ..add(GGetRecommentProductsData_products_category.serializer)
+      ..add(GGetRecommentProductsData_products_category_parent.serializer)
+      ..add(
+          GGetRecommentProductsData_products_category_parent_parent.serializer)
+      ..add(GGetRecommentProductsData_products_images.serializer)
+      ..add(GGetRecommentProductsReq.serializer)
+      ..add(GGetRecommentProductsVars.serializer)
+      ..add(GGetUserInfoData.serializer)
+      ..add(GGetUserInfoData_cart.serializer)
+      ..add(GGetUserInfoData_cart_images.serializer)
+      ..add(GGetUserInfoData_user.serializer)
+      ..add(GGetUserInfoReq.serializer)
+      ..add(GGetUserInfoVars.serializer)
+      ..add(GGetUserOrdersData.serializer)
+      ..add(GGetUserOrdersData_orders.serializer)
+      ..add(GGetUserOrdersData_orders_items.serializer)
+      ..add(GGetUserOrdersData_orders_items_images.serializer)
+      ..add(GGetUserOrdersReq.serializer)
+      ..add(GGetUserOrdersVars.serializer)
       ..add(GLoginData.serializer)
       ..add(GLoginReq.serializer)
       ..add(GLoginVars.serializer)
@@ -45,8 +72,24 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(GProductData.serializer)
       ..add(GRatingData.serializer)
       ..add(GRegisterData.serializer)
+      ..add(GRegisterData.serializer)
+      ..add(GRegisterReq.serializer)
+      ..add(GRegisterVars.serializer)
+      ..add(GRemoveCartItemData.serializer)
+      ..add(GRemoveCartItemData_cart.serializer)
+      ..add(GRemoveCartItemData_cart_images.serializer)
+      ..add(GRemoveCartItemReq.serializer)
+      ..add(GRemoveCartItemVars.serializer)
       ..add(GUpload.serializer)
       ..add(GUserData.serializer)
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GAddCartItemData_cart)]),
+          () => new ListBuilder<GAddCartItemData_cart>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GAddCartItemData_cart_images)]),
+          () => new ListBuilder<GAddCartItemData_cart_images>())
       ..addBuilderFactory(
           const FullType(
               BuiltList, const [const FullType(GGetCategoriesData_categories)]),
@@ -86,8 +129,50 @@ Serializers _$serializers = (new Serializers().toBuilder()
               const [const FullType(GGetProductsData_products_authors)]),
           () => new ListBuilder<GGetProductsData_products_authors>())
       ..addBuilderFactory(
+          const FullType(BuiltList,
+              const [const FullType(GGetRecommentProductsData_products)]),
+          () => new ListBuilder<GGetRecommentProductsData_products>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [
+            const FullType(GGetRecommentProductsData_products_images)
+          ]),
+          () => new ListBuilder<GGetRecommentProductsData_products_images>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [
+            const FullType(GGetRecommentProductsData_products_authors)
+          ]),
+          () => new ListBuilder<GGetRecommentProductsData_products_authors>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GGetUserInfoData_cart)]),
+          () => new ListBuilder<GGetUserInfoData_cart>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GGetUserInfoData_cart_images)]),
+          () => new ListBuilder<GGetUserInfoData_cart_images>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GGetUserOrdersData_orders)]),
+          () => new ListBuilder<GGetUserOrdersData_orders>())
+      ..addBuilderFactory(
+          const FullType(BuiltList,
+              const [const FullType(GGetUserOrdersData_orders_items)]),
+          () => new ListBuilder<GGetUserOrdersData_orders_items>())
+      ..addBuilderFactory(
+          const FullType(BuiltList,
+              const [const FullType(GGetUserOrdersData_orders_items_images)]),
+          () => new ListBuilder<GGetUserOrdersData_orders_items_images>())
+      ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(GOrderItemData)]),
           () => new ListBuilder<GOrderItemData>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltList, const [const FullType(GRemoveCartItemData_cart)]),
+          () => new ListBuilder<GRemoveCartItemData_cart>())
+      ..addBuilderFactory(
+          const FullType(BuiltList,
+              const [const FullType(GRemoveCartItemData_cart_images)]),
+          () => new ListBuilder<GRemoveCartItemData_cart_images>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>()))

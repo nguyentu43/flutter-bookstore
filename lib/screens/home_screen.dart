@@ -1,10 +1,16 @@
+import 'package:ferry/ferry.dart';
+import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bookstore/graphql/client.dart';
+import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
+import 'package:flutter_bookstore/graphql/queries/getCategories.req.gql.dart';
+import 'package:flutter_bookstore/graphql/queries/getCategories.var.gql.dart';
+import 'package:flutter_bookstore/helpers/app_service.dart';
 import 'package:flutter_bookstore/routes.dart';
-import 'package:flutter_bookstore/widgets/components/background.dart';
+import 'package:flutter_bookstore/widgets/components/move_to_category.dart';
 import 'package:flutter_bookstore/widgets/tabs/account_tab.dart';
 import 'package:flutter_bookstore/widgets/tabs/home_tab.dart';
 import 'package:flutter_bookstore/widgets/tabs/orders_tab.dart';
-import 'package:flutter_bookstore/widgets/tabs/search_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -22,18 +28,22 @@ class _TabItem {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  int currentIndex = 0;
+  int _currentIndex = 0;
 
   final tabs = <_TabItem>[
     _TabItem(child: HomeTab(), icon: Icons.home, text: 'Home'),
-    _TabItem(child: SearchTab(), icon: Icons.search, text: 'Search'),
+    _TabItem(child: Container(), icon: Icons.search, text: 'Search'),
     _TabItem(child: OrdersTab(), icon: Icons.list_alt, text: 'Orders'),
     _TabItem(child: AccountTab(), icon: Icons.person, text: 'My Account'),
   ];
 
-  void selectTab(int index) {
+  void selectTab(BuildContext context, int index) {
+    if (index == 1) {
+      Navigator.of(context).pushNamed(MainRoute.search);
+      return;
+    }
     setState(() {
-      currentIndex = index;
+      _currentIndex = index;
     });
     _tabController.animateTo(index);
   }
@@ -42,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(
-        length: tabs.length, vsync: this, initialIndex: currentIndex);
+        length: tabs.length, vsync: this, initialIndex: _currentIndex);
   }
 
   @override
@@ -57,25 +67,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return SafeArea(
       child: Scaffold(
         drawer: Drawer(
-            child: Padding(
+            child: Operation(
+          operationRequest: GGetCategoriesReq(),
+          client: AppService().client,
+          builder: (context,
+              OperationResponse<GGetCategoriesData, GGetCategoriesVars>?
+                  response,
+              error) {
+            if (response!.loading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            return Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     if (index == 0) {
-                      return Text("Categories",
+                      return Text("All Categories",
                           style: textTheme.headline3
                               ?.merge(TextStyle(fontWeight: FontWeight.bold)));
                     }
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5.0),
-                      child: Text("Category", style: textTheme.headline5),
+
+                    final category = response.data!.categories[index - 1];
+
+                    return MoveToCategory(
+                      category: category,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(category.name, style: textTheme.headline5),
+                      ),
                     );
                   },
-                  itemCount: 10,
-                ))),
+                  itemCount: response.data!.categories.length + 1,
+                ));
+          },
+        )),
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
-          child: Container(
+          child: SizedBox(
               height: 60,
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -84,11 +115,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     _TabItem tab = item.value;
                     return IconButton(
                         onPressed: () {
-                          selectTab(index);
+                          selectTab(context, index);
                         },
                         icon: Icon(
                           tab.icon,
-                          color: currentIndex == index
+                          color: _currentIndex == index
                               ? Colors.orange
                               : Colors.black,
                         ));

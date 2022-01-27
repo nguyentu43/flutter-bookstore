@@ -1,0 +1,1 @@
+query GetUserInfo{user: getUserInfo{name, isAdmin, email, id} cart:getUserCart{id, name, price, slug, discount, quantity, images{secure_url}}}

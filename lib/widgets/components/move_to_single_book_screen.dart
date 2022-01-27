@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bookstore/screens/home_screen.dart';
-import 'package:flutter_bookstore/screens/not_found_screen.dart';
 import 'package:flutter_bookstore/screens/single_book_screen.dart';
-import 'package:flutter_bookstore/widgets/components/book_item.dart';
-import 'package:flutter_bookstore/widgets/components/detail_book_item.dart';
-import 'package:flutter_bookstore/widgets/components/laid_book_item.dart';
 
 class MoveToSingleBookScreen extends StatelessWidget {
   final Widget child;

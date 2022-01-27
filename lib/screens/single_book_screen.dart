@@ -2,10 +2,14 @@ import 'package:ferry/ferry.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
+import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.var.gql.dart';
+import 'package:flutter_bookstore/helpers/app_service.dart';
+import 'package:flutter_bookstore/widgets/components/move_to_category.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
+import 'package:flutter_bookstore/widgets/components/top_bar.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 
@@ -19,7 +23,7 @@ class SingleBookScreen extends StatefulWidget {
 }
 
 class _SingleBookScreenState extends State<SingleBookScreen> {
-  int currentIndex = 0;
+  int _currentIndex = 0;
 
   final _tabs = [
     Tab(
@@ -39,13 +43,18 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
             builder: (context,
                 OperationResponse<GGetProductData, GGetProductVars>? response,
                 error) {
-              if (response!.loading) return CircularProgressIndicator();
+              if (response!.loading)
+                return Center(child: CircularProgressIndicator());
 
               final product = response.data!.product;
 
               return ListView(
                 physics: BouncingScrollPhysics(),
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: TopBar(),
+                  ),
                   Container(
                     height: 280,
                     margin: EdgeInsets.symmetric(vertical: 10.0),
@@ -117,7 +126,11 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                   child: Text("Category",
                                       style: textTheme.headline5),
                                 ),
-                                Text(product.category!.name)
+                                MoveToCategory(
+                                    category:
+                                        GGetCategoriesData_categories.fromJson(
+                                            product.category!.toJson()),
+                                    child: Text(product.category!.name))
                               ],
                             ),
                           ),
@@ -129,7 +142,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                   child: Text("Review",
                                       style: textTheme.headline5),
                                 ),
-                                Text("3")
+                                Text(product.ratings!.length.toString())
                               ],
                             ),
                           )
@@ -142,11 +155,16 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(width: 100, child: SpinBox()),
+                        SizedBox(
+                            width: 100,
+                            child: SpinBox(
+                              min: 1,
+                            )),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: RoundedButton(
-                            child: Icon(Icons.add_shopping_cart),
+                            child: Icon(Icons.add_shopping_cart,
+                                color: Colors.white),
                             onPressed: () {},
                           ),
                         ),
@@ -154,7 +172,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                           padding: const EdgeInsets.only(left: 10.0),
                           child: RoundedButton(
                             backgroundColor: Colors.pink,
-                            child: Icon(Icons.favorite),
+                            child: Icon(Icons.favorite, color: Colors.white),
                             onPressed: () {},
                           ),
                         ),
@@ -169,7 +187,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                       labelStyle: textTheme.headline6,
                       onTap: (index) {
                         setState(() {
-                          currentIndex = index;
+                          _currentIndex = index;
                         });
                       },
                     ),
@@ -177,7 +195,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: IndexedStack(
-                      index: currentIndex,
+                      index: _currentIndex,
                       children: [
                         Html(
                           data: product.description!,
@@ -189,7 +207,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                 ],
               );
             },
-            client: client,
+            client: AppService().client,
             operationRequest: GGetProductReq((b) => b.vars.slug = widget.slug),
           ),
         ),

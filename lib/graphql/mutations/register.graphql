@@ -1,0 +1,1 @@
+mutation Register($input: RegisterData!){token: register(input: $input)}
