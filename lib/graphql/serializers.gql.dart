@@ -7,6 +7,24 @@ import 'package:flutter_bookstore/graphql/mutations/addCartItem.req.gql.dart'
     show GAddCartItemReq;
 import 'package:flutter_bookstore/graphql/mutations/addCartItem.var.gql.dart'
     show GAddCartItemVars;
+import 'package:flutter_bookstore/graphql/mutations/addRating.data.gql.dart'
+    show GAddRatingData, GAddRatingData_result;
+import 'package:flutter_bookstore/graphql/mutations/addRating.req.gql.dart'
+    show GAddRatingReq;
+import 'package:flutter_bookstore/graphql/mutations/addRating.var.gql.dart'
+    show GAddRatingVars;
+import 'package:flutter_bookstore/graphql/mutations/addWishlist.data.gql.dart'
+    show GAddWishlistData;
+import 'package:flutter_bookstore/graphql/mutations/addWishlist.req.gql.dart'
+    show GAddWishlistReq;
+import 'package:flutter_bookstore/graphql/mutations/addWishlist.var.gql.dart'
+    show GAddWishlistVars;
+import 'package:flutter_bookstore/graphql/mutations/checkout.data.gql.dart'
+    show GCheckoutData, GCheckoutData_order;
+import 'package:flutter_bookstore/graphql/mutations/checkout.req.gql.dart'
+    show GCheckoutReq;
+import 'package:flutter_bookstore/graphql/mutations/checkout.var.gql.dart'
+    show GCheckoutVars;
 import 'package:flutter_bookstore/graphql/mutations/register.data.gql.dart'
     show GRegisterData;
 import 'package:flutter_bookstore/graphql/mutations/register.req.gql.dart'
@@ -22,6 +40,24 @@ import 'package:flutter_bookstore/graphql/mutations/removeCartItem.req.gql.dart'
     show GRemoveCartItemReq;
 import 'package:flutter_bookstore/graphql/mutations/removeCartItem.var.gql.dart'
     show GRemoveCartItemVars;
+import 'package:flutter_bookstore/graphql/mutations/removeRating.data.gql.dart'
+    show GRemoveRatingData;
+import 'package:flutter_bookstore/graphql/mutations/removeRating.req.gql.dart'
+    show GRemoveRatingReq;
+import 'package:flutter_bookstore/graphql/mutations/removeRating.var.gql.dart'
+    show GRemoveRatingVars;
+import 'package:flutter_bookstore/graphql/mutations/removeWishlist.data.gql.dart'
+    show GRemoveWishlistData;
+import 'package:flutter_bookstore/graphql/mutations/removeWishlist.req.gql.dart'
+    show GRemoveWishlistReq;
+import 'package:flutter_bookstore/graphql/mutations/removeWishlist.var.gql.dart'
+    show GRemoveWishlistVars;
+import 'package:flutter_bookstore/graphql/mutations/updateRating.data.gql.dart'
+    show GUpdateRatingData, GUpdateRatingData_result;
+import 'package:flutter_bookstore/graphql/mutations/updateRating.req.gql.dart'
+    show GUpdateRatingReq;
+import 'package:flutter_bookstore/graphql/mutations/updateRating.var.gql.dart'
+    show GUpdateRatingVars;
 import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart'
     show
         GGetCategoriesData,
@@ -33,6 +69,12 @@ import 'package:flutter_bookstore/graphql/queries/getCategories.req.gql.dart'
     show GGetCategoriesReq;
 import 'package:flutter_bookstore/graphql/queries/getCategories.var.gql.dart'
     show GGetCategoriesVars;
+import 'package:flutter_bookstore/graphql/queries/getPaymentCode.data.gql.dart'
+    show GGetPaymentCodeData;
+import 'package:flutter_bookstore/graphql/queries/getPaymentCode.req.gql.dart'
+    show GGetPaymentCodeReq;
+import 'package:flutter_bookstore/graphql/queries/getPaymentCode.var.gql.dart'
+    show GGetPaymentCodeVars;
 import 'package:flutter_bookstore/graphql/queries/getProduct.data.gql.dart'
     show
         GGetProductData,
@@ -94,6 +136,15 @@ import 'package:flutter_bookstore/graphql/queries/getUserOrders.req.gql.dart'
     show GGetUserOrdersReq;
 import 'package:flutter_bookstore/graphql/queries/getUserOrders.var.gql.dart'
     show GGetUserOrdersVars;
+import 'package:flutter_bookstore/graphql/queries/getWishlist.data.gql.dart'
+    show
+        GGetWishlistData,
+        GGetWishlistData_products,
+        GGetWishlistData_products_images;
+import 'package:flutter_bookstore/graphql/queries/getWishlist.req.gql.dart'
+    show GGetWishlistReq;
+import 'package:flutter_bookstore/graphql/queries/getWishlist.var.gql.dart'
+    show GGetWishlistVars;
 import 'package:flutter_bookstore/graphql/queries/login.data.gql.dart'
     show GLoginData;
 import 'package:flutter_bookstore/graphql/queries/login.req.gql.dart'
@@ -125,9 +176,20 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GAddCartItemData_cart_images,
   GAddCartItemReq,
   GAddCartItemVars,
+  GAddRatingData,
+  GAddRatingData_result,
+  GAddRatingReq,
+  GAddRatingVars,
+  GAddWishlistData,
+  GAddWishlistReq,
+  GAddWishlistVars,
   GAuthorData,
   GCartItemData,
   GCategoryData,
+  GCheckoutData,
+  GCheckoutData_order,
+  GCheckoutReq,
+  GCheckoutVars,
   GGetCategoriesData,
   GGetCategoriesData_categories,
   GGetCategoriesData_categories_children,
@@ -135,6 +197,9 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GGetCategoriesData_categories_parent,
   GGetCategoriesReq,
   GGetCategoriesVars,
+  GGetPaymentCodeData,
+  GGetPaymentCodeReq,
+  GGetPaymentCodeVars,
   GGetProductData,
   GGetProductData_product,
   GGetProductData_product_authors,
@@ -176,6 +241,11 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GGetUserOrdersData_orders_items_images,
   GGetUserOrdersReq,
   GGetUserOrdersVars,
+  GGetWishlistData,
+  GGetWishlistData_products,
+  GGetWishlistData_products_images,
+  GGetWishlistReq,
+  GGetWishlistVars,
   GLoginData,
   GLoginReq,
   GLoginVars,
@@ -191,6 +261,16 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GRemoveCartItemData_cart_images,
   GRemoveCartItemReq,
   GRemoveCartItemVars,
+  GRemoveRatingData,
+  GRemoveRatingReq,
+  GRemoveRatingVars,
+  GRemoveWishlistData,
+  GRemoveWishlistReq,
+  GRemoveWishlistVars,
+  GUpdateRatingData,
+  GUpdateRatingData_result,
+  GUpdateRatingReq,
+  GUpdateRatingVars,
   GUpload,
   GUserData
 ])

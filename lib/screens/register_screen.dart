@@ -6,6 +6,7 @@ import 'package:flutter_bookstore/helpers/secure_storage.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:restart_app/restart_app.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key? key}) : super(key: key);
@@ -35,6 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (!response.hasErrors) {
             await secureStorage.write(
                 key: "token", value: response.data!.token);
+            Restart.restartApp();
           } else {
             CoolAlert.show(
                 context: context,

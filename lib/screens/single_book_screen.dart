@@ -1,12 +1,20 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:ferry/ferry.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
+import 'package:flutter_bookstore/graphql/mutations/addCartItem.req.gql.dart';
+import 'package:flutter_bookstore/graphql/mutations/addWishlist.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.var.gql.dart';
+import 'package:flutter_bookstore/graphql/queries/getUserInfo.data.gql.dart';
 import 'package:flutter_bookstore/helpers/app_service.dart';
+import 'package:flutter_bookstore/models/bloc/auth_bloc.dart';
+import 'package:flutter_bookstore/models/bloc/cart_bloc.dart';
+import 'package:flutter_bookstore/widgets/components/error_box.dart';
 import 'package:flutter_bookstore/widgets/components/move_to_category.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 import 'package:flutter_bookstore/widgets/components/top_bar.dart';
@@ -24,6 +32,7 @@ class SingleBookScreen extends StatefulWidget {
 
 class _SingleBookScreenState extends State<SingleBookScreen> {
   int _currentIndex = 0;
+  int _quantity = 1;
 
   final _tabs = [
     Tab(
@@ -45,6 +54,12 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                 error) {
               if (response!.loading)
                 return Center(child: CircularProgressIndicator());
+
+              if (response.hasErrors) {
+                return Center(
+                    child:
+                        ErrorBox(text: response.graphqlErrors!.first.message));
+              }
 
               final product = response.data!.product;
 
@@ -92,13 +107,13 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                           Row(
                             children: [
                               Text(
-                                  "\$ ${(product.price * (1.0 - product.discount!)).toStringAsFixed(1)}",
+                                  "\$ ${(product.price * (1.0 - product.discount!)).toStringAsFixed(2)}",
                                   style: textTheme.headline4),
                               Padding(
                                 padding: const EdgeInsets.only(left: 10.0),
                                 child: Chip(
                                   label: Text(
-                                      "${(product.discount! * 100.0).toStringAsFixed(1)}%",
+                                      "${(product.discount! * 100.0).toStringAsFixed(2)}%",
                                       style: textTheme.caption?.merge(
                                           TextStyle(color: Colors.white))),
                                   backgroundColor: Colors.orange,
@@ -139,10 +154,28 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Text("Review",
+                                  child: Text(
+                                      "Review  ${product.ratings!.isNotEmpty ? '(' + product.ratings!.length.toString() + ')' : ''}",
                                       style: textTheme.headline5),
                                 ),
-                                Text(product.ratings!.length.toString())
+                                product.ratings!.isEmpty
+                                    ? Text("No review")
+                                    : Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text((product.ratings!.fold<double>(
+                                                      0.0,
+                                                      (r, item) =>
+                                                          r + item.rate) /
+                                                  product.ratings!.length)
+                                              .toStringAsFixed(1)),
+                                          Icon(
+                                            Icons.star_rate,
+                                            color: Colors.yellow,
+                                          )
+                                        ],
+                                      ),
                               ],
                             ),
                           )
@@ -159,13 +192,59 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                             width: 100,
                             child: SpinBox(
                               min: 1,
+                              value: 1,
+                              onChanged: (value) {
+                                _quantity = value.toInt();
+                              },
                             )),
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: RoundedButton(
                             child: Icon(Icons.add_shopping_cart,
                                 color: Colors.white),
-                            onPressed: () {},
+                            onPressed: () {
+                              if (BlocProvider.of<AuthBloc>(context).state ==
+                                  null) {
+                                CoolAlert.show(
+                                    context: context,
+                                    type: CoolAlertType.info,
+                                    text: "Login to add cart");
+                                return;
+                              }
+
+                              final cart =
+                                  BlocProvider.of<CartBloc>(context).state;
+
+                              int quantity = _quantity;
+                              for (var item in cart) {
+                                if (item!.id == product.id) {
+                                  quantity += item.quantity;
+                                }
+                              }
+
+                              AppService()
+                                  .client
+                                  .request(GAddCartItemReq((b) => b
+                                    ..vars.input.id = product.id
+                                    ..vars.input.quantity = quantity))
+                                  .listen((response) {
+                                if (!response.loading) {
+                                  if (!response.hasErrors) {
+                                    final cart = response.data!.cart!
+                                        .map((item) =>
+                                            GGetUserInfoData_cart.fromJson(
+                                                item.toJson()))
+                                        .toList();
+                                    BlocProvider.of<CartBloc>(context)
+                                        .add(UpdateCartEvent(cart: cart));
+                                    CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.success,
+                                        text: "${product.name} to cart");
+                                  }
+                                }
+                              });
+                            },
                           ),
                         ),
                         Padding(
@@ -173,7 +252,23 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                           child: RoundedButton(
                             backgroundColor: Colors.pink,
                             child: Icon(Icons.favorite, color: Colors.white),
-                            onPressed: () {},
+                            onPressed: () {
+                              AppService()
+                                  .client
+                                  .request(GAddWishlistReq(
+                                      (b) => b..vars.id = product.id))
+                                  .listen((response) {
+                                if (!response.loading) {
+                                  if (!response.hasErrors) {
+                                    CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.info,
+                                        text:
+                                            "${product.name} add to wishlist");
+                                  }
+                                }
+                              });
+                            },
                           ),
                         ),
                       ],
@@ -200,7 +295,56 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                         Html(
                           data: product.description!,
                         ),
-                        Text("Reviews"),
+                        Column(
+                          children: [
+                            ListView.separated(
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  final rating = product.ratings![index];
+                                  return Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10.0),
+                                        child: Column(
+                                          children: [
+                                            CircleAvatar(
+                                              child: Icon(Icons.person),
+                                            ),
+                                            Text(rating.user.name),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10.0),
+                                        child: Column(
+                                          children: [
+                                            Text(rating.title,
+                                                style: textTheme.headline6
+                                                    ?.merge(TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold))),
+                                            Row(
+                                              children: [
+                                                Text(rating.rate.toString()),
+                                                Icon(
+                                                  Icons.star_rate,
+                                                  color: Colors.yellow,
+                                                )
+                                              ],
+                                            ),
+                                            Text(rating.comment)
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                },
+                                separatorBuilder: (context, index) => Divider(),
+                                itemCount: product.ratings!.length),
+                          ],
+                        )
                       ],
                     ),
                   )

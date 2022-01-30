@@ -9,6 +9,7 @@ import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:restart_app/restart_app.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -34,8 +35,12 @@ class _LoginScreenState extends State<LoginScreen> {
             ..vars.password = _passwordTextController.text))
           .listen((response) async {
         Navigator.of(context).pop();
-        if (!response.hasErrors) {
-          await secureStorage.write(key: "token", value: response.data!.token);
+        if (!response.loading) {
+          if (!response.hasErrors) {
+            await secureStorage.write(
+                key: "token", value: response.data!.token);
+            Restart.restartApp();
+          }
         }
       });
     }

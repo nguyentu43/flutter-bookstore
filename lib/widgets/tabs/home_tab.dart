@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ferry/typed_links.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,7 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   BuiltList<GGetCategoriesData_categories> _categories = BuiltList();
+  StreamSubscription? subscription;
 
   @override
   void initState() {
@@ -37,12 +40,23 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   }
 
   void _fetchCategories() {
-    AppService().client.request(GGetCategoriesReq()).listen((response) {
-      setState(() {
-        if (response.loading) return;
-        _categories = response.data!.categories;
-      });
+    subscription =
+        AppService().client.request(GGetCategoriesReq()).listen((response) {
+      if (!response.loading) {
+        if (!response.hasErrors) {
+          setState(() {
+            _categories = response.data!.categories;
+          });
+        }
+        subscription?.cancel();
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    subscription?.cancel();
+    super.dispose();
   }
 
   @override
@@ -125,6 +139,7 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                         }
 
                         final products = response.data!.products;
+                        final firstProduct = products.first;
 
                         return Column(
                           children: [
@@ -132,9 +147,19 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(10.0)),
-                              child: const Padding(
+                              child: Padding(
                                 padding: EdgeInsets.all(10.0),
-                                child: DetailBookItem(),
+                                child: DetailBookItem(
+                                  id: firstProduct.id,
+                                  slug: firstProduct.slug,
+                                  image: firstProduct.images!.first.secure_url,
+                                  author: firstProduct.authors!
+                                      .map((a) => a.name)
+                                      .join(', '),
+                                  price: firstProduct.price,
+                                  discount: firstProduct.discount ?? 0.0,
+                                  name: firstProduct.name,
+                                ),
                               ),
                             ),
                             Padding(
@@ -292,7 +317,6 @@ class _ListHeader extends StatelessWidget {
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(left: 10.0, top: 10.0, bottom: 10.0),
       child: child,

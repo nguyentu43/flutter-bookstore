@@ -1,0 +1,1 @@
+mutation Checkout($input: OrderData!){order: checkout(input: $input){id, status}}

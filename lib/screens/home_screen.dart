@@ -1,11 +1,14 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:ferry/ferry.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.var.gql.dart';
 import 'package:flutter_bookstore/helpers/app_service.dart';
+import 'package:flutter_bookstore/models/bloc/auth_bloc.dart';
 import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/move_to_category.dart';
 import 'package:flutter_bookstore/widgets/tabs/account_tab.dart';
@@ -42,6 +45,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       Navigator.of(context).pushNamed(MainRoute.search);
       return;
     }
+
+    if (index == 2) {
+      final authBloc = BlocProvider.of<AuthBloc>(context);
+      if (authBloc.state == null) {
+        CoolAlert.show(
+          context: context,
+          type: CoolAlertType.confirm,
+          text: "Login to get your orders",
+          onConfirmBtnTap: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pushNamed(MainRoute.login);
+          },
+        );
+        return;
+      }
+    }
+
     setState(() {
       _currentIndex = index;
     });
@@ -129,7 +149,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.shopping_cart),
           onPressed: () {
-            Navigator.of(context).pushNamed(MainRoute.cart);
+            if (BlocProvider.of<AuthBloc>(context).state != null) {
+              Navigator.of(context).pushNamed(MainRoute.cart);
+            } else {
+              CoolAlert.show(
+                  context: context,
+                  type: CoolAlertType.info,
+                  text: "Login to open cart");
+            }
           },
         ),
         body: TabBarView(
