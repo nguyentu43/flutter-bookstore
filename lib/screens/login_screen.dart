@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:cool_alert/cool_alert.dart';
 import 'package:ferry/ferry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/queries/login.req.gql.dart';
+import 'package:flutter_bookstore/graphql/queries/loginWithProvider.req.gql.dart';
 import 'package:flutter_bookstore/helpers/app_service.dart';
 import 'package:flutter_bookstore/helpers/secure_storage.dart';
 import 'package:flutter_bookstore/routes.dart';
 import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:restart_app/restart_app.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,10 +24,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final _emailTextController = TextEditingController(text: "admin@example.com");
-
   final _passwordTextController = TextEditingController(text: "12345678");
+
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'https://www.googleapis.com/auth/userinfo.email',
+      'https://www.googleapis.com/auth/userinfo.profile',
+    ],
+  );
+
+  StreamSubscription? _googleSignInStream;
 
   void _processLogin(BuildContext context) {
     if (_formKey.currentState!.validate()) {
@@ -34,12 +45,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ..vars.email = _emailTextController.text
             ..vars.password = _passwordTextController.text))
           .listen((response) async {
-        Navigator.of(context).pop();
         if (!response.loading) {
           if (!response.hasErrors) {
             await secureStorage.write(
                 key: "token", value: response.data!.token);
             Restart.restartApp();
+          } else {
+            CoolAlert.show(
+                context: context,
+                type: CoolAlertType.error,
+                text: response.graphqlErrors!.first.message);
           }
         }
       });
@@ -47,10 +62,24 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _googleSignInStream = _googleSignIn.onCurrentUserChanged
+        .listen((GoogleSignInAccount? account) {
+      if (account != null) {
+        _processLoginWithProvider(account);
+        _googleSignIn.disconnect();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _emailTextController.dispose();
     _passwordTextController.dispose();
+    _googleSignInStream?.cancel();
+    _googleSignIn.disconnect();
   }
 
   @override
@@ -123,7 +152,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: textTheme.button
                       ?.merge(const TextStyle(color: Colors.white)),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  _loginWithGoogle(context);
+                },
                 backgroundColor: Colors.redAccent,
               ),
               const SizedBox(height: 10),
@@ -143,5 +174,32 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     )));
+  }
+
+  void _loginWithGoogle(BuildContext context) async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.error,
+          text: "Google login error");
+    }
+  }
+
+  void _processLoginWithProvider(GoogleSignInAccount account) {
+    AppService()
+        .client
+        .request(GLoginWithProviderReq((b) => b
+          ..vars.email = account.email
+          ..vars.name = account.displayName))
+        .listen((response) async {
+      if (!response.loading) {
+        if (!response.hasErrors) {
+          await secureStorage.write(key: "token", value: response.data!.token);
+          Restart.restartApp();
+        }
+      }
+    });
   }
 }

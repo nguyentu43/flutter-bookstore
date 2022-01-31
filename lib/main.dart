@@ -18,30 +18,30 @@ import 'package:singleton/singleton.dart';
 
 import 'models/bloc/cart_bloc.dart';
 
-void main() {
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  // runZonedGuarded(() async {
+  //   WidgetsFlutterBinding.ensureInitialized();
 
-    // FlutterError.onError = (FlutterErrorDetails details) {
-    //   FlutterError.presentError(details);
-    //   exit(1);
-    // };
+  //   // FlutterError.onError = (FlutterErrorDetails details) {
+  //   //   FlutterError.presentError(details);
+  //   //   exit(1);
+  //   // };
 
-    Stripe.publishableKey = kStripeApiPk;
-    Singleton.register(AppService.createInstance());
-    await Singleton.ensureInstanceFor(AppService);
+  //   Stripe.publishableKey = kStripeApiPk;
+  //   Singleton.register(AppService.createInstance());
+  //   await Singleton.ensureInstanceFor(AppService);
 
-    runApp(const MyApp());
-  }, (Object error, StackTrace stack) {
-    //exit(1);
-  });
+  //   runApp(const MyApp());
+  // }, (Object error, StackTrace stack) {
+  //   //exit(1);
+  // });
 
-  // WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey = kStripeApiPk;
-  // Singleton.register(AppService.createInstance());
-  // await Singleton.ensureInstanceFor(AppService);
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = kStripeApiPk;
+  Singleton.register(AppService.createInstance());
+  await Singleton.ensureInstanceFor(AppService);
 
-  // runApp(const MyApp());
+  runApp(const MyApp());
   // runApp(
   // DevicePreview(
   //   enabled: !kReleaseMode,
@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                 headline6: TextStyle(fontSize: 18, color: Colors.black),
               )),
           onGenerateRoute: MainRoute.onGenerateRoute,
-          initialRoute: MainRoute.home,
+          initialRoute: MainRoute.login,
           debugShowCheckedModeBanner: false,
           scrollBehavior: CustomScrollBehavior()),
     );

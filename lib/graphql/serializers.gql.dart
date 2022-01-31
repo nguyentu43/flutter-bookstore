@@ -151,6 +151,12 @@ import 'package:flutter_bookstore/graphql/queries/login.req.gql.dart'
     show GLoginReq;
 import 'package:flutter_bookstore/graphql/queries/login.var.gql.dart'
     show GLoginVars;
+import 'package:flutter_bookstore/graphql/queries/loginWithProvider.data.gql.dart'
+    show GLoginWithProviderData;
+import 'package:flutter_bookstore/graphql/queries/loginWithProvider.req.gql.dart'
+    show GLoginWithProviderReq;
+import 'package:flutter_bookstore/graphql/queries/loginWithProvider.var.gql.dart'
+    show GLoginWithProviderVars;
 import 'package:flutter_bookstore/graphql/schema.schema.gql.dart'
     show
         GAuthorData,
@@ -249,6 +255,9 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GLoginData,
   GLoginReq,
   GLoginVars,
+  GLoginWithProviderData,
+  GLoginWithProviderReq,
+  GLoginWithProviderVars,
   GOrderData,
   GOrderItemData,
   GProductData,

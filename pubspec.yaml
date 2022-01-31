@@ -50,6 +50,8 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   singleton: 0.0.3-nullsafety
   restart_app: ^1.1.0
+  google_sign_in: ^5.2.3
+  google_sign_in_web: ^0.10.0+4
 
 dev_dependencies:
   flutter_test:
