@@ -7,5 +7,4 @@ A new Flutter project.
 
 
 # Todo
-* Google login
 * Add rating

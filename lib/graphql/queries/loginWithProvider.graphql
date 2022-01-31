@@ -1,0 +1,1 @@
+query LoginWithProvider($email: String!, $name: String!){token: loginWithProvider(email: $email, name: $name)}
