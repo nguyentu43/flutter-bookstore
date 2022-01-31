@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cool_alert/cool_alert.dart';
 import 'package:ferry/ferry.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
@@ -6,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/mutations/addCartItem.req.gql.dart';
 import 'package:flutter_bookstore/graphql/mutations/addWishlist.req.gql.dart';
+import 'package:flutter_bookstore/graphql/mutations/removeRating.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProduct.req.gql.dart';
@@ -14,6 +17,7 @@ import 'package:flutter_bookstore/graphql/queries/getUserInfo.data.gql.dart';
 import 'package:flutter_bookstore/helpers/app_service.dart';
 import 'package:flutter_bookstore/models/bloc/auth_bloc.dart';
 import 'package:flutter_bookstore/models/bloc/cart_bloc.dart';
+import 'package:flutter_bookstore/screens/edit_rating_Screen.dart';
 import 'package:flutter_bookstore/widgets/components/error_box.dart';
 import 'package:flutter_bookstore/widgets/components/move_to_category.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
@@ -33,6 +37,7 @@ class SingleBookScreen extends StatefulWidget {
 class _SingleBookScreenState extends State<SingleBookScreen> {
   int _currentIndex = 0;
   int _quantity = 1;
+  String _requestId = "single_${Random().nextInt(255)}";
 
   final _tabs = [
     Tab(
@@ -62,6 +67,14 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
               }
 
               final product = response.data!.product;
+              bool hasRating = false;
+              final auth = BlocProvider.of<AuthBloc>(context).state;
+              for (var rating in product!.ratings!) {
+                if (auth != null && rating.user.id == auth.id) {
+                  hasRating = true;
+                  break;
+                }
+              }
 
               return ListView(
                 physics: BouncingScrollPhysics(),
@@ -80,7 +93,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                           borderRadius: BorderRadius.circular(10.0),
                           child: Stack(
                             children: [
-                              Image.network(product!.images!.first.secure_url),
+                              Image.network(product.images!.first.secure_url),
                             ],
                           ),
                         ),
@@ -212,38 +225,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                 return;
                               }
 
-                              final cart =
-                                  BlocProvider.of<CartBloc>(context).state;
-
-                              int quantity = _quantity;
-                              for (var item in cart) {
-                                if (item!.id == product.id) {
-                                  quantity += item.quantity;
-                                }
-                              }
-
-                              AppService()
-                                  .client
-                                  .request(GAddCartItemReq((b) => b
-                                    ..vars.input.id = product.id
-                                    ..vars.input.quantity = quantity))
-                                  .listen((response) {
-                                if (!response.loading) {
-                                  if (!response.hasErrors) {
-                                    final cart = response.data!.cart!
-                                        .map((item) =>
-                                            GGetUserInfoData_cart.fromJson(
-                                                item.toJson()))
-                                        .toList();
-                                    BlocProvider.of<CartBloc>(context)
-                                        .add(UpdateCartEvent(cart: cart));
-                                    CoolAlert.show(
-                                        context: context,
-                                        type: CoolAlertType.success,
-                                        text: "${product.name} to cart");
-                                  }
-                                }
-                              });
+                              _addToCart(context, product);
                             },
                           ),
                         ),
@@ -253,21 +235,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                             backgroundColor: Colors.pink,
                             child: Icon(Icons.favorite, color: Colors.white),
                             onPressed: () {
-                              AppService()
-                                  .client
-                                  .request(GAddWishlistReq(
-                                      (b) => b..vars.id = product.id))
-                                  .listen((response) {
-                                if (!response.loading) {
-                                  if (!response.hasErrors) {
-                                    CoolAlert.show(
-                                        context: context,
-                                        type: CoolAlertType.info,
-                                        text:
-                                            "${product.name} add to wishlist");
-                                  }
-                                }
-                              });
+                              _addWishlist(product, context);
                             },
                           ),
                         ),
@@ -300,7 +268,20 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                             ListView.separated(
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) {
-                                  final rating = product.ratings![index];
+                                  if (index == 0) {
+                                    if (hasRating) return Container();
+                                    return RoundedButton(
+                                        onPressed: () {
+                                          _addRating(context, product.id);
+                                        },
+                                        child: Text("Add rating",
+                                            style: textTheme.button));
+                                  }
+
+                                  final rating = product.ratings![index - 1];
+                                  final isOwner =
+                                      auth != null && auth.id == rating.user.id;
+
                                   return Row(
                                     children: [
                                       Padding(
@@ -315,16 +296,19 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                           ],
                                         ),
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 10.0),
+                                      Expanded(
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
                                           children: [
-                                            Text(rating.title,
-                                                style: textTheme.headline6
-                                                    ?.merge(TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold))),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: Text(rating.title,
+                                                  style: textTheme.headline6
+                                                      ?.merge(TextStyle(
+                                                          fontWeight: FontWeight
+                                                              .bold))),
+                                            ),
                                             Row(
                                               children: [
                                                 Text(rating.rate.toString()),
@@ -334,15 +318,70 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                                 )
                                               ],
                                             ),
-                                            Text(rating.comment)
+                                            SizedBox(
+                                                width: double.infinity,
+                                                child: Text(rating.comment))
                                           ],
                                         ),
-                                      )
+                                      ),
+                                      if (isOwner)
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
+                                          child: Column(
+                                            children: [
+                                              RoundedButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute(
+                                                            builder: (_) =>
+                                                                EditRatingScreen(
+                                                                    rating:
+                                                                        rating,
+                                                                    productID:
+                                                                        product
+                                                                            .id,
+                                                                    userID:
+                                                                        auth.id,
+                                                                    onSubmit:
+                                                                        () {
+                                                                      _rebuild();
+                                                                    })));
+                                                  },
+                                                  backgroundColor: Colors.green,
+                                                  child: Icon(Icons.edit,
+                                                      color: Colors.white)),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 5.0),
+                                                child: RoundedButton(
+                                                    onPressed: () {
+                                                      CoolAlert.show(
+                                                          context: context,
+                                                          type: CoolAlertType
+                                                              .confirm,
+                                                          text:
+                                                              'Do you want to delete?',
+                                                          onConfirmBtnTap: () {
+                                                            _deleteRating(
+                                                                rating.id);
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          });
+                                                    },
+                                                    backgroundColor: Colors.red,
+                                                    child: Icon(Icons.delete,
+                                                        color: Colors.white)),
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                     ],
                                   );
                                 },
                                 separatorBuilder: (context, index) => Divider(),
-                                itemCount: product.ratings!.length),
+                                itemCount: product.ratings!.length + 1),
                           ],
                         )
                       ],
@@ -352,10 +391,97 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
               );
             },
             client: AppService().client,
-            operationRequest: GGetProductReq((b) => b.vars.slug = widget.slug),
+            operationRequest: GGetProductReq((b) => b
+              ..vars.slug = widget.slug
+              ..requestId = _requestId),
           ),
         ),
       ),
     );
+  }
+
+  void _addToCart(BuildContext context, GGetProductData_product product) {
+    final cart = BlocProvider.of<CartBloc>(context).state;
+
+    int quantity = _quantity;
+    for (var item in cart) {
+      if (item!.id == product.id) {
+        quantity += item.quantity;
+      }
+    }
+
+    AppService()
+        .client
+        .request(GAddCartItemReq((b) => b
+          ..vars.input.id = product.id
+          ..vars.input.quantity = quantity))
+        .listen((response) {
+      if (!response.loading) {
+        if (!response.hasErrors) {
+          final cart = response.data!.cart!
+              .map((item) => GGetUserInfoData_cart.fromJson(item.toJson()))
+              .toList();
+          BlocProvider.of<CartBloc>(context).add(UpdateCartEvent(cart: cart));
+          CoolAlert.show(
+              context: context,
+              type: CoolAlertType.success,
+              text: "${product.name} to cart");
+        }
+      }
+    });
+  }
+
+  void _addWishlist(GGetProductData_product product, BuildContext context) {
+    AppService()
+        .client
+        .request(GAddWishlistReq((b) => b..vars.id = product.id))
+        .listen((response) {
+      if (!response.loading) {
+        if (!response.hasErrors) {
+          CoolAlert.show(
+              context: context,
+              type: CoolAlertType.info,
+              text: "${product.name} add to wishlist");
+        }
+      }
+    });
+  }
+
+  void _rebuild() {
+    setState(() {
+      _requestId = "single_${Random().nextInt(255)}";
+    });
+  }
+
+  void _addRating(BuildContext context, productID) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    if (authBloc.state == null) {
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.info,
+          text: "Login to add rating");
+    } else {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => EditRatingScreen(
+                onSubmit: () {
+                  _rebuild();
+                },
+                userID: authBloc.state!.id,
+                productID: productID,
+              )));
+    }
+  }
+
+  void _deleteRating(String id) {
+    AppService()
+        .client
+        .request(GRemoveRatingReq((b) => b.vars.id = id))
+        .listen((response) {
+      if (!response.loading) {
+        if (!response.hasErrors) {
+          _rebuild();
+        }
+      }
+    });
   }
 }

@@ -106,7 +106,7 @@ class _MyAppState extends State<MyApp> {
               primarySwatch: Colors.blue,
               fontFamily: 'Dosis',
               textTheme: const TextTheme(
-                button: TextStyle(fontSize: 16),
+                button: TextStyle(fontSize: 16, color: Colors.white),
                 bodyText1: TextStyle(fontSize: 16),
                 caption: TextStyle(fontSize: 12),
                 subtitle1: TextStyle(fontSize: 16, color: Colors.black54),

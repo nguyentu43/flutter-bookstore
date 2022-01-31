@@ -68,7 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
         .listen((GoogleSignInAccount? account) {
       if (account != null) {
         _processLoginWithProvider(account);
-        _googleSignIn.disconnect();
       }
     });
   }
@@ -196,6 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .listen((response) async {
       if (!response.loading) {
         if (!response.hasErrors) {
+          _googleSignIn.disconnect();
           await secureStorage.write(key: "token", value: response.data!.token);
           Restart.restartApp();
         }

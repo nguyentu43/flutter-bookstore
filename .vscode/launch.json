@@ -7,7 +7,8 @@
         {
             "name": "flutter_bookstore",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--web-port=34257"]
         },
         {
             "name": "flutter_bookstore (profile mode)",
