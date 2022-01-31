@@ -68,7 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
         .listen((GoogleSignInAccount? account) {
       if (account != null) {
         _processLoginWithProvider(account);
-        _googleSignIn.disconnect();
       }
     });
   }

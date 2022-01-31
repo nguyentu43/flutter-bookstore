@@ -52,6 +52,8 @@ dependencies:
   restart_app: ^1.1.0
   google_sign_in: ^5.2.3
   google_sign_in_web: ^0.10.0+4
+  flutter_rating_bar: ^4.0.0
+
 
 dev_dependencies:
   flutter_test:
