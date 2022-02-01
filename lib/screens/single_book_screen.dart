@@ -1,11 +1,8 @@
-import 'dart:math';
-
 import 'package:cool_alert/cool_alert.dart';
 import 'package:ferry/ferry.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/mutations/addCartItem.req.gql.dart';
 import 'package:flutter_bookstore/graphql/mutations/addWishlist.req.gql.dart';
 import 'package:flutter_bookstore/graphql/mutations/removeRating.req.gql.dart';
@@ -37,35 +34,36 @@ class SingleBookScreen extends StatefulWidget {
 class _SingleBookScreenState extends State<SingleBookScreen> {
   int _currentIndex = 0;
   int _quantity = 1;
-  String _requestId = "single_${Random().nextInt(255)}";
+  Key _key = UniqueKey();
 
   final _tabs = [
-    Tab(
+    const Tab(
       text: "Information",
     ),
-    Tab(text: "Review")
+    const Tab(text: "Review")
   ];
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-        body: DefaultTabController(
+    return Scaffold(
+      body: SafeArea(
+        key: _key,
+        child: DefaultTabController(
           length: _tabs.length,
           child: Operation(
             builder: (context,
                 OperationResponse<GGetProductData, GGetProductVars>? response,
                 error) {
               if (response!.loading)
-                return Center(child: CircularProgressIndicator());
-
+                return const Center(child: CircularProgressIndicator());
+      
               if (response.hasErrors) {
                 return Center(
                     child:
                         ErrorBox(text: response.graphqlErrors!.first.message));
               }
-
+      
               final product = response.data!.product;
               bool hasRating = false;
               final auth = BlocProvider.of<AuthBloc>(context).state;
@@ -75,17 +73,17 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                   break;
                 }
               }
-
+      
               return ListView(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 10.0),
                     child: TopBar(),
                   ),
                   Container(
                     height: 280,
-                    margin: EdgeInsets.symmetric(vertical: 10.0),
+                    margin: const EdgeInsets.symmetric(vertical: 10.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -101,14 +99,14 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                     ),
                   ),
                   Container(
-                    margin:
-                        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0),
+                    margin: const EdgeInsets.only(
+                        bottom: 10.0, left: 10.0, right: 10.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(product.name,
                             style: textTheme.headline2?.merge(
-                                TextStyle(fontWeight: FontWeight.bold))),
+                                const TextStyle(fontWeight: FontWeight.bold))),
                         Text(product.authors!.map((i) => i.name).join(", "),
                             style: textTheme.subtitle1),
                         Text("\$ ${product.price.toStringAsFixed(1)}",
@@ -128,7 +126,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                   label: Text(
                                       "${(product.discount! * 100.0).toStringAsFixed(2)}%",
                                       style: textTheme.caption?.merge(
-                                          TextStyle(color: Colors.white))),
+                                          const TextStyle(
+                                              color: Colors.white))),
                                   backgroundColor: Colors.orange,
                                 ),
                               )
@@ -141,7 +140,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.grey[300]),
-                    margin: EdgeInsets.symmetric(horizontal: 10.0),
+                    margin: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Row(
@@ -172,7 +171,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                       style: textTheme.headline5),
                                 ),
                                 product.ratings!.isEmpty
-                                    ? Text("No review")
+                                    ? const Text("No review")
                                     : Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -183,7 +182,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                                           r + item.rate) /
                                                   product.ratings!.length)
                                               .toStringAsFixed(1)),
-                                          Icon(
+                                          const Icon(
                                             Icons.star_rate,
                                             color: Colors.yellow,
                                           )
@@ -213,7 +212,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10.0),
                           child: RoundedButton(
-                            child: Icon(Icons.add_shopping_cart,
+                            child: const Icon(Icons.add_shopping_cart,
                                 color: Colors.white),
                             onPressed: () {
                               if (BlocProvider.of<AuthBloc>(context).state ==
@@ -224,7 +223,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                     text: "Login to add cart");
                                 return;
                               }
-
+      
                               _addToCart(context, product);
                             },
                           ),
@@ -233,7 +232,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                           padding: const EdgeInsets.only(left: 10.0),
                           child: RoundedButton(
                             backgroundColor: Colors.pink,
-                            child: Icon(Icons.favorite, color: Colors.white),
+                            child:
+                                const Icon(Icons.favorite, color: Colors.white),
                             onPressed: () {
                               _addWishlist(product, context);
                             },
@@ -277,11 +277,11 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                         child: Text("Add rating",
                                             style: textTheme.button));
                                   }
-
+      
                                   final rating = product.ratings![index - 1];
                                   final isOwner =
                                       auth != null && auth.id == rating.user.id;
-
+      
                                   return Row(
                                     children: [
                                       Padding(
@@ -289,8 +289,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                             horizontal: 10.0),
                                         child: Column(
                                           children: [
-                                            CircleAvatar(
-                                              child: Icon(Icons.person),
+                                            const CircleAvatar(
+                                              child: const Icon(Icons.person),
                                             ),
                                             Text(rating.user.name),
                                           ],
@@ -305,14 +305,14 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                               width: double.infinity,
                                               child: Text(rating.title,
                                                   style: textTheme.headline6
-                                                      ?.merge(TextStyle(
+                                                      ?.merge(const TextStyle(
                                                           fontWeight: FontWeight
                                                               .bold))),
                                             ),
                                             Row(
                                               children: [
                                                 Text(rating.rate.toString()),
-                                                Icon(
+                                                const Icon(
                                                   Icons.star_rate,
                                                   color: Colors.yellow,
                                                 )
@@ -349,7 +349,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                                                     })));
                                                   },
                                                   backgroundColor: Colors.green,
-                                                  child: Icon(Icons.edit,
+                                                  child: const Icon(Icons.edit,
                                                       color: Colors.white)),
                                               Padding(
                                                 padding: const EdgeInsets.only(
@@ -371,7 +371,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                                           });
                                                     },
                                                     backgroundColor: Colors.red,
-                                                    child: Icon(Icons.delete,
+                                                    child: const Icon(
+                                                        Icons.delete,
                                                         color: Colors.white)),
                                               )
                                             ],
@@ -380,7 +381,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
                                     ],
                                   );
                                 },
-                                separatorBuilder: (context, index) => Divider(),
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
                                 itemCount: product.ratings!.length + 1),
                           ],
                         )
@@ -393,7 +395,7 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
             client: AppService().client,
             operationRequest: GGetProductReq((b) => b
               ..vars.slug = widget.slug
-              ..requestId = _requestId),
+              ..fetchPolicy = FetchPolicy.NetworkOnly),
           ),
         ),
       ),
@@ -432,6 +434,14 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
   }
 
   void _addWishlist(GGetProductData_product product, BuildContext context) {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    if (authBloc.state == null) {
+      CoolAlert.show(
+          context: context,
+          type: CoolAlertType.info,
+          text: "Login to add wishlist");
+      return;
+    }
     AppService()
         .client
         .request(GAddWishlistReq((b) => b..vars.id = product.id))
@@ -449,7 +459,8 @@ class _SingleBookScreenState extends State<SingleBookScreen> {
 
   void _rebuild() {
     setState(() {
-      _requestId = "single_${Random().nextInt(255)}";
+      _key = UniqueKey();
+      _currentIndex = 0;
     });
   }
 

@@ -19,35 +19,17 @@ import 'package:singleton/singleton.dart';
 import 'models/bloc/cart_bloc.dart';
 
 void main() async {
-  // runZonedGuarded(() async {
-  //   WidgetsFlutterBinding.ensureInitialized();
-
-  //   // FlutterError.onError = (FlutterErrorDetails details) {
-  //   //   FlutterError.presentError(details);
-  //   //   exit(1);
-  //   // };
-
-  //   Stripe.publishableKey = kStripeApiPk;
-  //   Singleton.register(AppService.createInstance());
-  //   await Singleton.ensureInstanceFor(AppService);
-
-  //   runApp(const MyApp());
-  // }, (Object error, StackTrace stack) {
-  //   //exit(1);
-  // });
-
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = kStripeApiPk;
   Singleton.register(AppService.createInstance());
   await Singleton.ensureInstanceFor(AppService);
 
-  runApp(const MyApp());
-  // runApp(
-  // DevicePreview(
-  //   enabled: !kReleaseMode,
-  //   builder: (context) => MyApp(), // Wrap your app
-  // ),
-  // );
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -119,7 +101,7 @@ class _MyAppState extends State<MyApp> {
                 headline6: TextStyle(fontSize: 18, color: Colors.black),
               )),
           onGenerateRoute: MainRoute.onGenerateRoute,
-          initialRoute: MainRoute.login,
+          initialRoute: MainRoute.home,
           debugShowCheckedModeBanner: false,
           scrollBehavior: CustomScrollBehavior()),
     );

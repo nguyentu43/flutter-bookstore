@@ -17,7 +17,7 @@ abstract class GUpdateRatingData
       b..G__typename = 'Mutation';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
-  GUpdateRatingData_result? get result;
+  GUpdateRatingData_updateRating? get updateRating;
   static Serializer<GUpdateRatingData> get serializer =>
       _$gUpdateRatingDataSerializer;
   Map<String, dynamic> toJson() =>
@@ -27,28 +27,28 @@ abstract class GUpdateRatingData
       _i1.serializers.deserializeWith(GUpdateRatingData.serializer, json);
 }
 
-abstract class GUpdateRatingData_result
+abstract class GUpdateRatingData_updateRating
     implements
-        Built<GUpdateRatingData_result, GUpdateRatingData_resultBuilder> {
-  GUpdateRatingData_result._();
+        Built<GUpdateRatingData_updateRating,
+            GUpdateRatingData_updateRatingBuilder> {
+  GUpdateRatingData_updateRating._();
 
-  factory GUpdateRatingData_result(
-          [Function(GUpdateRatingData_resultBuilder b) updates]) =
-      _$GUpdateRatingData_result;
+  factory GUpdateRatingData_updateRating(
+          [Function(GUpdateRatingData_updateRatingBuilder b) updates]) =
+      _$GUpdateRatingData_updateRating;
 
-  static void _initializeBuilder(GUpdateRatingData_resultBuilder b) =>
+  static void _initializeBuilder(GUpdateRatingData_updateRatingBuilder b) =>
       b..G__typename = 'Rating';
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   String get title;
   int get rate;
   String get comment;
-  static Serializer<GUpdateRatingData_result> get serializer =>
-      _$gUpdateRatingDataResultSerializer;
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GUpdateRatingData_result.serializer, this)
-          as Map<String, dynamic>);
-  static GUpdateRatingData_result? fromJson(Map<String, dynamic> json) =>
+  static Serializer<GUpdateRatingData_updateRating> get serializer =>
+      _$gUpdateRatingDataUpdateRatingSerializer;
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+      GUpdateRatingData_updateRating.serializer, this) as Map<String, dynamic>);
+  static GUpdateRatingData_updateRating? fromJson(Map<String, dynamic> json) =>
       _i1.serializers
-          .deserializeWith(GUpdateRatingData_result.serializer, json);
+          .deserializeWith(GUpdateRatingData_updateRating.serializer, json);
 }

@@ -22,7 +22,7 @@ class OrdersTab extends StatelessWidget {
             OperationResponse<GGetUserOrdersData, GGetUserOrdersVars>? response,
             error) {
           if (response!.loading) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

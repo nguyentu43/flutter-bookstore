@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:dropdown_search/dropdown_search.dart';
@@ -36,20 +37,22 @@ class _SearchScreenState extends State<SearchScreen> {
   GGetCategoriesData_categories? _currentCategory;
   String _keyword = "";
   final int _limit = 12;
+  StreamSubscription? _streamSub;
 
   final PagingController<int, GGetProductsData_products> _pagingController =
       PagingController(firstPageKey: 0);
 
   void _fetchProduct(int pageKey) {
     final requestProducts = GGetProductsReq((b) => b
-      ..requestId = "fetchProduct${Random().nextInt(255)}"
+      ..fetchPolicy = FetchPolicy.NetworkOnly
       ..vars.search =
           "keyword=$_keyword${_currentCategory == null ? "" : "&category=" + _currentCategory!.id}"
       ..vars.limit = _limit
       ..vars.offset = pageKey);
 
-    AppService().client.request(requestProducts).listen((response) {
-      if (!response.loading) {
+    _streamSub =
+        AppService().client.request(requestProducts).listen((response) {
+      if (!response.loading && !response.hasErrors) {
         final newItems = response.data!.products.toList();
         final isLastPage = newItems.length < _limit;
         if (isLastPage) {
@@ -58,6 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
           final nextPageKey = pageKey + newItems.length;
           _pagingController.appendPage(newItems, nextPageKey);
         }
+        _streamSub?.cancel();
       }
     });
   }
@@ -76,20 +80,21 @@ class _SearchScreenState extends State<SearchScreen> {
   void dispose() {
     _searchEditController.dispose();
     _pagingController.dispose();
+    _streamSub?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-        body: ListView(
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0),
-              child: const TopBar(
+              child: TopBar(
                 headerText: "SEARCH",
               ),
             ),
@@ -206,7 +211,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               )),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     mainAxisSpacing: 10.0,
-                    crossAxisCount: 4,
+                    crossAxisCount: 3,
                     childAspectRatio: 0.7,
                   ),
                 ))

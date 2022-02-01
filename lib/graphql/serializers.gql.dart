@@ -53,7 +53,7 @@ import 'package:flutter_bookstore/graphql/mutations/removeWishlist.req.gql.dart'
 import 'package:flutter_bookstore/graphql/mutations/removeWishlist.var.gql.dart'
     show GRemoveWishlistVars;
 import 'package:flutter_bookstore/graphql/mutations/updateRating.data.gql.dart'
-    show GUpdateRatingData, GUpdateRatingData_result;
+    show GUpdateRatingData, GUpdateRatingData_updateRating;
 import 'package:flutter_bookstore/graphql/mutations/updateRating.req.gql.dart'
     show GUpdateRatingReq;
 import 'package:flutter_bookstore/graphql/mutations/updateRating.var.gql.dart'
@@ -277,7 +277,7 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GRemoveWishlistReq,
   GRemoveWishlistVars,
   GUpdateRatingData,
-  GUpdateRatingData_result,
+  GUpdateRatingData_updateRating,
   GUpdateRatingReq,
   GUpdateRatingVars,
   GUpload,

@@ -8,8 +8,9 @@ part of 'updateRating.data.gql.dart';
 
 Serializer<GUpdateRatingData> _$gUpdateRatingDataSerializer =
     new _$GUpdateRatingDataSerializer();
-Serializer<GUpdateRatingData_result> _$gUpdateRatingDataResultSerializer =
-    new _$GUpdateRatingData_resultSerializer();
+Serializer<GUpdateRatingData_updateRating>
+    _$gUpdateRatingDataUpdateRatingSerializer =
+    new _$GUpdateRatingData_updateRatingSerializer();
 
 class _$GUpdateRatingDataSerializer
     implements StructuredSerializer<GUpdateRatingData> {
@@ -27,12 +28,12 @@ class _$GUpdateRatingDataSerializer
           specifiedType: const FullType(String)),
     ];
     Object? value;
-    value = object.result;
+    value = object.updateRating;
     if (value != null) {
       result
-        ..add('result')
+        ..add('updateRating')
         ..add(serializers.serialize(value,
-            specifiedType: const FullType(GUpdateRatingData_result)));
+            specifiedType: const FullType(GUpdateRatingData_updateRating)));
     }
     return result;
   }
@@ -53,10 +54,11 @@ class _$GUpdateRatingDataSerializer
           result.G__typename = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
-        case 'result':
-          result.result.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(GUpdateRatingData_result))!
-              as GUpdateRatingData_result);
+        case 'updateRating':
+          result.updateRating.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(GUpdateRatingData_updateRating))!
+              as GUpdateRatingData_updateRating);
           break;
       }
     }
@@ -65,19 +67,19 @@ class _$GUpdateRatingDataSerializer
   }
 }
 
-class _$GUpdateRatingData_resultSerializer
-    implements StructuredSerializer<GUpdateRatingData_result> {
+class _$GUpdateRatingData_updateRatingSerializer
+    implements StructuredSerializer<GUpdateRatingData_updateRating> {
   @override
   final Iterable<Type> types = const [
-    GUpdateRatingData_result,
-    _$GUpdateRatingData_result
+    GUpdateRatingData_updateRating,
+    _$GUpdateRatingData_updateRating
   ];
   @override
-  final String wireName = 'GUpdateRatingData_result';
+  final String wireName = 'GUpdateRatingData_updateRating';
 
   @override
   Iterable<Object?> serialize(
-      Serializers serializers, GUpdateRatingData_result object,
+      Serializers serializers, GUpdateRatingData_updateRating object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object?>[
       '__typename',
@@ -97,10 +99,10 @@ class _$GUpdateRatingData_resultSerializer
   }
 
   @override
-  GUpdateRatingData_result deserialize(
+  GUpdateRatingData_updateRating deserialize(
       Serializers serializers, Iterable<Object?> serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new GUpdateRatingData_resultBuilder();
+    final result = new GUpdateRatingData_updateRatingBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -135,13 +137,14 @@ class _$GUpdateRatingData extends GUpdateRatingData {
   @override
   final String G__typename;
   @override
-  final GUpdateRatingData_result? result;
+  final GUpdateRatingData_updateRating? updateRating;
 
   factory _$GUpdateRatingData(
           [void Function(GUpdateRatingDataBuilder)? updates]) =>
       (new GUpdateRatingDataBuilder()..update(updates)).build();
 
-  _$GUpdateRatingData._({required this.G__typename, this.result}) : super._() {
+  _$GUpdateRatingData._({required this.G__typename, this.updateRating})
+      : super._() {
     BuiltValueNullFieldError.checkNotNull(
         G__typename, 'GUpdateRatingData', 'G__typename');
   }
@@ -159,19 +162,19 @@ class _$GUpdateRatingData extends GUpdateRatingData {
     if (identical(other, this)) return true;
     return other is GUpdateRatingData &&
         G__typename == other.G__typename &&
-        result == other.result;
+        updateRating == other.updateRating;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, G__typename.hashCode), result.hashCode));
+    return $jf($jc($jc(0, G__typename.hashCode), updateRating.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('GUpdateRatingData')
           ..add('G__typename', G__typename)
-          ..add('result', result))
+          ..add('updateRating', updateRating))
         .toString();
   }
 }
@@ -184,11 +187,11 @@ class GUpdateRatingDataBuilder
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  GUpdateRatingData_resultBuilder? _result;
-  GUpdateRatingData_resultBuilder get result =>
-      _$this._result ??= new GUpdateRatingData_resultBuilder();
-  set result(GUpdateRatingData_resultBuilder? result) =>
-      _$this._result = result;
+  GUpdateRatingData_updateRatingBuilder? _updateRating;
+  GUpdateRatingData_updateRatingBuilder get updateRating =>
+      _$this._updateRating ??= new GUpdateRatingData_updateRatingBuilder();
+  set updateRating(GUpdateRatingData_updateRatingBuilder? updateRating) =>
+      _$this._updateRating = updateRating;
 
   GUpdateRatingDataBuilder() {
     GUpdateRatingData._initializeBuilder(this);
@@ -198,7 +201,7 @@ class GUpdateRatingDataBuilder
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
-      _result = $v.result?.toBuilder();
+      _updateRating = $v.updateRating?.toBuilder();
       _$v = null;
     }
     return this;
@@ -223,12 +226,12 @@ class GUpdateRatingDataBuilder
           new _$GUpdateRatingData._(
               G__typename: BuiltValueNullFieldError.checkNotNull(
                   G__typename, 'GUpdateRatingData', 'G__typename'),
-              result: _result?.build());
+              updateRating: _updateRating?.build());
     } catch (_) {
       late String _$failedField;
       try {
-        _$failedField = 'result';
-        _result?.build();
+        _$failedField = 'updateRating';
+        _updateRating?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'GUpdateRatingData', _$failedField, e.toString());
@@ -240,7 +243,7 @@ class GUpdateRatingDataBuilder
   }
 }
 
-class _$GUpdateRatingData_result extends GUpdateRatingData_result {
+class _$GUpdateRatingData_updateRating extends GUpdateRatingData_updateRating {
   @override
   final String G__typename;
   @override
@@ -250,39 +253,39 @@ class _$GUpdateRatingData_result extends GUpdateRatingData_result {
   @override
   final String comment;
 
-  factory _$GUpdateRatingData_result(
-          [void Function(GUpdateRatingData_resultBuilder)? updates]) =>
-      (new GUpdateRatingData_resultBuilder()..update(updates)).build();
+  factory _$GUpdateRatingData_updateRating(
+          [void Function(GUpdateRatingData_updateRatingBuilder)? updates]) =>
+      (new GUpdateRatingData_updateRatingBuilder()..update(updates)).build();
 
-  _$GUpdateRatingData_result._(
+  _$GUpdateRatingData_updateRating._(
       {required this.G__typename,
       required this.title,
       required this.rate,
       required this.comment})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(
-        G__typename, 'GUpdateRatingData_result', 'G__typename');
+        G__typename, 'GUpdateRatingData_updateRating', 'G__typename');
     BuiltValueNullFieldError.checkNotNull(
-        title, 'GUpdateRatingData_result', 'title');
+        title, 'GUpdateRatingData_updateRating', 'title');
     BuiltValueNullFieldError.checkNotNull(
-        rate, 'GUpdateRatingData_result', 'rate');
+        rate, 'GUpdateRatingData_updateRating', 'rate');
     BuiltValueNullFieldError.checkNotNull(
-        comment, 'GUpdateRatingData_result', 'comment');
+        comment, 'GUpdateRatingData_updateRating', 'comment');
   }
 
   @override
-  GUpdateRatingData_result rebuild(
-          void Function(GUpdateRatingData_resultBuilder) updates) =>
+  GUpdateRatingData_updateRating rebuild(
+          void Function(GUpdateRatingData_updateRatingBuilder) updates) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  GUpdateRatingData_resultBuilder toBuilder() =>
-      new GUpdateRatingData_resultBuilder()..replace(this);
+  GUpdateRatingData_updateRatingBuilder toBuilder() =>
+      new GUpdateRatingData_updateRatingBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is GUpdateRatingData_result &&
+    return other is GUpdateRatingData_updateRating &&
         G__typename == other.G__typename &&
         title == other.title &&
         rate == other.rate &&
@@ -298,7 +301,7 @@ class _$GUpdateRatingData_result extends GUpdateRatingData_result {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('GUpdateRatingData_result')
+    return (newBuiltValueToStringHelper('GUpdateRatingData_updateRating')
           ..add('G__typename', G__typename)
           ..add('title', title)
           ..add('rate', rate)
@@ -307,10 +310,11 @@ class _$GUpdateRatingData_result extends GUpdateRatingData_result {
   }
 }
 
-class GUpdateRatingData_resultBuilder
+class GUpdateRatingData_updateRatingBuilder
     implements
-        Builder<GUpdateRatingData_result, GUpdateRatingData_resultBuilder> {
-  _$GUpdateRatingData_result? _$v;
+        Builder<GUpdateRatingData_updateRating,
+            GUpdateRatingData_updateRatingBuilder> {
+  _$GUpdateRatingData_updateRating? _$v;
 
   String? _G__typename;
   String? get G__typename => _$this._G__typename;
@@ -328,11 +332,11 @@ class GUpdateRatingData_resultBuilder
   String? get comment => _$this._comment;
   set comment(String? comment) => _$this._comment = comment;
 
-  GUpdateRatingData_resultBuilder() {
-    GUpdateRatingData_result._initializeBuilder(this);
+  GUpdateRatingData_updateRatingBuilder() {
+    GUpdateRatingData_updateRating._initializeBuilder(this);
   }
 
-  GUpdateRatingData_resultBuilder get _$this {
+  GUpdateRatingData_updateRatingBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
@@ -345,28 +349,28 @@ class GUpdateRatingData_resultBuilder
   }
 
   @override
-  void replace(GUpdateRatingData_result other) {
+  void replace(GUpdateRatingData_updateRating other) {
     ArgumentError.checkNotNull(other, 'other');
-    _$v = other as _$GUpdateRatingData_result;
+    _$v = other as _$GUpdateRatingData_updateRating;
   }
 
   @override
-  void update(void Function(GUpdateRatingData_resultBuilder)? updates) {
+  void update(void Function(GUpdateRatingData_updateRatingBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$GUpdateRatingData_result build() {
+  _$GUpdateRatingData_updateRating build() {
     final _$result = _$v ??
-        new _$GUpdateRatingData_result._(
+        new _$GUpdateRatingData_updateRating._(
             G__typename: BuiltValueNullFieldError.checkNotNull(
-                G__typename, 'GUpdateRatingData_result', 'G__typename'),
+                G__typename, 'GUpdateRatingData_updateRating', 'G__typename'),
             title: BuiltValueNullFieldError.checkNotNull(
-                title, 'GUpdateRatingData_result', 'title'),
+                title, 'GUpdateRatingData_updateRating', 'title'),
             rate: BuiltValueNullFieldError.checkNotNull(
-                rate, 'GUpdateRatingData_result', 'rate'),
+                rate, 'GUpdateRatingData_updateRating', 'rate'),
             comment: BuiltValueNullFieldError.checkNotNull(
-                comment, 'GUpdateRatingData_result', 'comment'));
+                comment, 'GUpdateRatingData_updateRating', 'comment'));
     replace(_$result);
     return _$result;
   }

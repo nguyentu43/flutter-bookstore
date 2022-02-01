@@ -92,140 +92,9 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
             child: Text("Featured Categories",
                 style: textTheme.headline4
                     ?.merge(const TextStyle(fontWeight: FontWeight.bold)))),
-        Container(
-            margin: const EdgeInsets.only(bottom: 10.0),
-            height: 120,
-            child: _categories.isNotEmpty
-                ? ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.only(left: 10.0),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: _categories.length,
-                    itemBuilder: (context, index) =>
-                        CategoryItem(category: _categories[index]))
-                : const Center(child: CircularProgressIndicator())),
-        Container(
-          decoration: BoxDecoration(
-              color: Colors.green[400],
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0))),
-          child: Visibility(
-            visible: BlocProvider.of<AuthBloc>(context).state != null,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _ListHeader(
-                    child: Text("Recommended For You",
-                        style: textTheme.headline4?.merge(const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)))),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Operation(
-                      operationRequest: GGetRecommentProductsReq(),
-                      builder: (context,
-                          OperationResponse<GGetRecommentProductsData,
-                                  GGetRecommentProductsVars>?
-                              response,
-                          error) {
-                        if (response!.loading) {
-                          return SizedBox(
-                            height: 80,
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                        }
-
-                        final products = response.data!.products;
-                        final firstProduct = products.first;
-
-                        return Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              child: Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: DetailBookItem(
-                                  id: firstProduct.id,
-                                  slug: firstProduct.slug,
-                                  image: firstProduct.images!.first.secure_url,
-                                  author: firstProduct.authors!
-                                      .map((a) => a.name)
-                                      .join(', '),
-                                  price: firstProduct.price,
-                                  discount: firstProduct.discount ?? 0.0,
-                                  name: firstProduct.name,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10.0),
-                              child: SizedBox(
-                                height: 160,
-                                child: ListView(
-                                  physics: const BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  children: products
-                                      .skip(1)
-                                      .map((product) => BookItem(
-                                          image: product.images![0].secure_url,
-                                          discount: product.discount ?? 0.0,
-                                          id: product.id,
-                                          slug: product.slug))
-                                      .toList(),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                      client: AppService().client),
-                )
-              ],
-            ),
-          ),
-        ),
-        _ListHeader(
-            child: Text("Best-Selling",
-                style: textTheme.headline4
-                    ?.merge(const TextStyle(fontWeight: FontWeight.bold)))),
-        SizedBox(
-            height: 160,
-            child: Operation(
-              client: AppService().client,
-              operationRequest: GGetProductsReq((b) => b
-                ..vars.search = "order=0"
-                ..vars.limit = 10),
-              builder: (context,
-                  OperationResponse<GGetProductsData, GGetProductsVars>?
-                      response,
-                  error) {
-                if (response!.loading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                final products = response.data!.products;
-                return ListView.builder(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return BookItem(
-                        image: product.images![0].secure_url,
-                        discount: product.discount!,
-                        id: product.id,
-                        slug: product.slug,
-                      );
-                    });
-              },
-            )),
+        _CategoryList(categories: _categories),
+        _RecommendBooks(textTheme: textTheme),
+        _BestSellingBooks(textTheme: textTheme),
         _ListHeader(
             child: Text("On Sale",
                 style: textTheme.headline4
@@ -312,6 +181,192 @@ class _HomeTabState extends State<HomeTab> with TickerProviderStateMixin {
   }
 }
 
+class _BestSellingBooks extends StatelessWidget {
+  const _BestSellingBooks({
+    Key? key,
+    required this.textTheme,
+  }) : super(key: key);
+
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 10.0),
+      decoration: BoxDecoration(
+          color: Colors.red[400],
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ListHeader(
+              child: Text("Best-Selling",
+                  style: textTheme.headline4?.merge(const TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white)))),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10.0),
+            child: SizedBox(
+                height: 160,
+                child: Operation(
+                  client: AppService().client,
+                  operationRequest: GGetProductsReq((b) => b
+                    ..vars.search = "order=0"
+                    ..vars.limit = 10),
+                  builder: (context,
+                      OperationResponse<GGetProductsData, GGetProductsVars>?
+                          response,
+                      error) {
+                    if (response!.loading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    final products = response.data!.products;
+                    return ListView.builder(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return BookItem(
+                            image: product.images![0].secure_url,
+                            discount: product.discount!,
+                            id: product.id,
+                            slug: product.slug,
+                          );
+                        });
+                  },
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecommendBooks extends StatelessWidget {
+  const _RecommendBooks({
+    Key? key,
+    required this.textTheme,
+  }) : super(key: key);
+
+  final TextTheme textTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.green[400],
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+          )),
+      child: Visibility(
+        visible: BlocProvider.of<AuthBloc>(context).state != null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _ListHeader(
+                child: Text("Recommended For You",
+                    style: textTheme.headline4?.merge(const TextStyle(
+                        fontWeight: FontWeight.bold, color: Colors.white)))),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Operation(
+                  operationRequest: GGetRecommentProductsReq(),
+                  builder: (context,
+                      OperationResponse<GGetRecommentProductsData,
+                              GGetRecommentProductsVars>?
+                          response,
+                      error) {
+                    if (response!.loading) {
+                      return SizedBox(
+                        height: 80,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    final products = response.data!.products;
+                    final firstProduct = products.first;
+
+                    return Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: DetailBookItem(
+                              id: firstProduct.id,
+                              slug: firstProduct.slug,
+                              image: firstProduct.images!.first.secure_url,
+                              author: firstProduct.authors!
+                                  .map((a) => a.name)
+                                  .join(', '),
+                              price: firstProduct.price,
+                              discount: firstProduct.discount ?? 0.0,
+                              name: firstProduct.name,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                          child: SizedBox(
+                            height: 160,
+                            child: ListView(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              children: products
+                                  .skip(1)
+                                  .map((product) => BookItem(
+                                      image: product.images![0].secure_url,
+                                      discount: product.discount ?? 0.0,
+                                      id: product.id,
+                                      slug: product.slug))
+                                  .toList(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  client: AppService().client),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryList extends StatelessWidget {
+  const _CategoryList({
+    Key? key,
+    required BuiltList<GGetCategoriesData_categories> categories,
+  })  : _categories = categories,
+        super(key: key);
+
+  final BuiltList<GGetCategoriesData_categories> _categories;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        margin: const EdgeInsets.only(bottom: 10.0),
+        height: 120,
+        child: _categories.isNotEmpty
+            ? ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.only(left: 10.0),
+                physics: const BouncingScrollPhysics(),
+                itemCount: _categories.length,
+                itemBuilder: (context, index) =>
+                    CategoryItem(category: _categories[index]))
+            : const Center(child: CircularProgressIndicator()));
+  }
+}
+
 class _ListHeader extends StatelessWidget {
   const _ListHeader({Key? key, required this.child}) : super(key: key);
   final Widget child;
@@ -385,7 +440,7 @@ class _CategoryTabsState extends State<_CategoryTabs> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisSpacing: 10.0,
-                      crossAxisCount: 4,
+                      crossAxisCount: 3,
                       childAspectRatio: 0.7,
                     ),
                     itemBuilder: (context, index) {

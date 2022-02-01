@@ -29,7 +29,7 @@ const UpdateRating = _i1.OperationDefinitionNode(
     selectionSet: _i1.SelectionSetNode(selections: [
       _i1.FieldNode(
           name: _i1.NameNode(value: 'updateRating'),
-          alias: _i1.NameNode(value: 'result'),
+          alias: null,
           arguments: [
             _i1.ArgumentNode(
                 name: _i1.NameNode(value: 'input'),
