@@ -61,17 +61,20 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
     final cartBloc = BlocProvider.of<CartBloc>(context, listen: true);
-    return SafeArea(
-      child: Scaffold(body: Builder(
+    return Scaffold(body: SafeArea(
+      child: Builder(
         builder: (context) {
           final cart = cartBloc.state;
-
+    
           if (cart.isEmpty) {
-            return Center(
-              child: EmptyBox(text: "Empty cart"),
+            return Column(
+              children: const [
+                TopBar(),
+                EmptyBox(text: "Empty cart"),
+              ],
             );
           }
-
+    
           return ListView.separated(
               itemBuilder: (context, index) {
                 if (index == 0) {
@@ -81,7 +84,7 @@ class CartScreen extends StatelessWidget {
                         headerText: "CART",
                       ));
                 }
-
+    
                 if (index == cart.length + 1) {
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -95,8 +98,8 @@ class CartScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(top: 10.0),
                           child: RoundedButton(
                             child: Text("Checkout",
-                                style: textTheme.button!
-                                    .merge(TextStyle(color: Colors.white))),
+                                style: textTheme.button!.merge(
+                                    const TextStyle(color: Colors.white))),
                             backgroundColor: Colors.green,
                             onPressed: () {
                               Scaffold.of(context).showBottomSheet((context) =>
@@ -122,9 +125,9 @@ class CartScreen extends StatelessWidget {
                     ),
                   );
                 }
-
+    
                 final item = cart[index - 1];
-
+    
                 return Container(
                   height: 150,
                   margin: const EdgeInsets.all(10.0),
@@ -173,7 +176,7 @@ class CartScreen extends StatelessWidget {
                                     Navigator.of(context).pop();
                                   });
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.delete,
                               color: Colors.white,
                             ),
@@ -192,8 +195,8 @@ class CartScreen extends StatelessWidget {
               },
               itemCount: cart.length + 2);
         },
-      )),
-    );
+      ),
+    ));
   }
 }
 

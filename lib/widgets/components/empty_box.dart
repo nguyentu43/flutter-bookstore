@@ -9,7 +9,7 @@ class EmptyBox extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.grid_off, size: 100.0, color: Colors.red),
+        Icon(Icons.grid_off, size: 100.0, color: Colors.black),
         Text(text),
       ],
     );

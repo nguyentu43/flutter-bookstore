@@ -36,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final tabs = <_TabItem>[
     _TabItem(child: HomeTab(), icon: Icons.home, text: 'Home'),
     _TabItem(child: Container(), icon: Icons.search, text: 'Search'),
-    _TabItem(child: OrdersTab(), icon: Icons.list_alt, text: 'Orders'),
-    _TabItem(child: AccountTab(), icon: Icons.person, text: 'My Account'),
+    _TabItem(child: const OrdersTab(), icon: Icons.list_alt, text: 'Orders'),
+    _TabItem(child: const AccountTab(), icon: Icons.person, text: 'My Account'),
   ];
 
   void selectTab(BuildContext context, int index) {
@@ -84,82 +84,82 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
-        drawer: Drawer(
-            child: Operation(
-          operationRequest: GGetCategoriesReq(),
-          client: AppService().client,
-          builder: (context,
-              OperationResponse<GGetCategoriesData, GGetCategoriesVars>?
-                  response,
-              error) {
-            if (response!.loading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+    return Scaffold(
+      drawer: Drawer(
+          child: Operation(
+        operationRequest: GGetCategoriesReq(),
+        client: AppService().client,
+        builder: (context,
+            OperationResponse<GGetCategoriesData, GGetCategoriesVars>?
+                response,
+            error) {
+          if (response!.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-            return Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return Text("All Categories",
-                          style: textTheme.headline3
-                              ?.merge(TextStyle(fontWeight: FontWeight.bold)));
-                    }
+          return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  if (index == 0) {
+                    return Text("All Categories",
+                        style: textTheme.headline3
+                            ?.merge(const TextStyle(fontWeight: FontWeight.bold)));
+                  }
 
-                    final category = response.data!.categories[index - 1];
+                  final category = response.data!.categories[index - 1];
 
-                    return MoveToCategory(
-                      category: category,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5.0),
-                        child: Text(category.name, style: textTheme.headline5),
-                      ),
-                    );
-                  },
-                  itemCount: response.data!.categories.length + 1,
-                ));
-          },
-        )),
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          child: SizedBox(
-              height: 60,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: tabs.asMap().entries.map((item) {
-                    int index = item.key;
-                    _TabItem tab = item.value;
-                    return IconButton(
-                        onPressed: () {
-                          selectTab(context, index);
-                        },
-                        icon: Icon(
-                          tab.icon,
-                          color: _currentIndex == index
-                              ? Colors.orange
-                              : Colors.black,
-                        ));
-                  }).toList())),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.shopping_cart),
-          onPressed: () {
-            if (BlocProvider.of<AuthBloc>(context).state != null) {
-              Navigator.of(context).pushNamed(MainRoute.cart);
-            } else {
-              CoolAlert.show(
-                  context: context,
-                  type: CoolAlertType.info,
-                  text: "Login to open cart");
-            }
-          },
-        ),
-        body: TabBarView(
+                  return MoveToCategory(
+                    category: category,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5.0),
+                      child: Text(category.name, style: textTheme.headline5),
+                    ),
+                  );
+                },
+                itemCount: response.data!.categories.length + 1,
+              ));
+        },
+      )),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        child: SizedBox(
+            height: 60,
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: tabs.asMap().entries.map((item) {
+                  int index = item.key;
+                  _TabItem tab = item.value;
+                  return IconButton(
+                      onPressed: () {
+                        selectTab(context, index);
+                      },
+                      icon: Icon(
+                        tab.icon,
+                        color: _currentIndex == index
+                            ? Colors.orange
+                            : Colors.black,
+                      ));
+                }).toList())),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.shopping_cart),
+        onPressed: () {
+          if (BlocProvider.of<AuthBloc>(context).state != null) {
+            Navigator.of(context).pushNamed(MainRoute.cart);
+          } else {
+            CoolAlert.show(
+                context: context,
+                type: CoolAlertType.info,
+                text: "Login to open cart");
+          }
+        },
+      ),
+      body: SafeArea(
+        child: TabBarView(
           controller: _tabController,
           children: tabs.map((e) => e.child).toList(),
         ),
