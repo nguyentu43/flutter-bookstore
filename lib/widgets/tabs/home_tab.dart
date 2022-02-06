@@ -4,7 +4,6 @@ import 'package:ferry/typed_links.dart';
 import 'package:ferry_flutter/ferry_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_bookstore/graphql/client.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.data.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getCategories.req.gql.dart';
 import 'package:flutter_bookstore/graphql/queries/getProducts.data.gql.dart';
@@ -20,10 +19,9 @@ import 'package:flutter_bookstore/widgets/components/category_item.dart';
 import 'package:flutter_bookstore/widgets/components/detail_book_item.dart';
 import 'package:flutter_bookstore/widgets/components/laid_book_item.dart';
 import 'package:built_collection/built_collection.dart';
-import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 
 class HomeTab extends StatefulWidget {
-  HomeTab({Key? key}) : super(key: key);
+  const HomeTab({Key? key}) : super(key: key);
 
   @override
   State<HomeTab> createState() => _HomeTabState();
