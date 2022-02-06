@@ -290,7 +290,8 @@ class _RecommendBooks extends StatelessWidget {
                   return Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding:
+                            const EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 10.0),
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
@@ -314,7 +315,8 @@ class _RecommendBooks extends StatelessWidget {
                       SizedBox(
                         height: 160,
                         child: ListView(
-                          padding: const EdgeInsets.only(left: 10.0),
+                          padding:
+                              const EdgeInsets.only(left: 10.0, bottom: 10.0),
                           physics: const BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
                           children: products
