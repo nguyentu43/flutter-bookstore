@@ -87,6 +87,10 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    final width = MediaQuery.of(context).size.width;
+    final axisCount = width ~/ 120;
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -209,9 +213,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                 id: item.id,
                                 slug: item.slug,
                               )),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     mainAxisSpacing: 10.0,
-                    crossAxisCount: 3,
+                    crossAxisCount: axisCount,
                     childAspectRatio: 0.7,
                   ),
                 ))

@@ -17,6 +17,7 @@ import 'package:flutter_bookstore/models/bloc/auth_bloc.dart';
 import 'package:flutter_bookstore/widgets/components/book_item.dart';
 import 'package:flutter_bookstore/widgets/components/category_item.dart';
 import 'package:flutter_bookstore/widgets/components/detail_book_item.dart';
+import 'package:flutter_bookstore/widgets/components/empty_box.dart';
 import 'package:flutter_bookstore/widgets/components/laid_book_item.dart';
 import 'package:built_collection/built_collection.dart';
 
@@ -433,13 +434,20 @@ class _CategoryTabsState extends State<_CategoryTabs> {
                   );
                 }
                 final products = response.data!.products;
+
+                if (products.isEmpty) {
+                  return const Center(child: EmptyBox(text: "No books"));
+                }
+
+                final width = MediaQuery.of(context).size.width;
+                final axisCount = width ~/ 120;
+
                 return GridView.builder(
                     itemCount: products.length,
                     shrinkWrap: true,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisSpacing: 10.0,
-                      crossAxisCount: 3,
+                      crossAxisCount: axisCount,
                       childAspectRatio: 0.7,
                     ),
                     itemBuilder: (context, index) {

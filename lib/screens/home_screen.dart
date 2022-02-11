@@ -90,8 +90,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         operationRequest: GGetCategoriesReq(),
         client: AppService().client,
         builder: (context,
-            OperationResponse<GGetCategoriesData, GGetCategoriesVars>?
-                response,
+            OperationResponse<GGetCategoriesData, GGetCategoriesVars>? response,
             error) {
           if (response!.loading) {
             return const Center(
@@ -105,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 itemBuilder: (context, index) {
                   if (index == 0) {
                     return Text("All Categories",
-                        style: textTheme.headline3
-                            ?.merge(const TextStyle(fontWeight: FontWeight.bold)));
+                        style: textTheme.headline3?.merge(
+                            const TextStyle(fontWeight: FontWeight.bold)));
                   }
 
                   final category = response.data!.categories[index - 1];
@@ -160,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       body: SafeArea(
         child: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
           controller: _tabController,
           children: tabs.map((e) => e.child).toList(),
         ),
