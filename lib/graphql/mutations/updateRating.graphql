@@ -1,0 +1,5 @@
+mutation UpdateRating($input: RatingData, $userID: ID!, $id: ID!) {
+        updateRating(input: $input, userID: $userID, id: $id){
+          title, rate, comment
+        }
+      }

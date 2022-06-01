@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bookstore/graphql/queries/getUserInfo.data.gql.dart';
 import 'package:flutter_bookstore/models/bloc/auth_bloc.dart';
 import 'package:flutter_bookstore/routes.dart';
+import 'package:flutter_bookstore/screens/wishlist_screen.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
 
 class AccountTab extends StatelessWidget {
@@ -57,8 +58,8 @@ class AccountTab extends StatelessWidget {
                   padding: const EdgeInsets.all(10.0),
                   child: RoundedButton(
                     onPressed: () {
-                      BlocProvider.of<AuthBloc>(context).add(LogoutEvent());
-                      Navigator.of(context).pushNamed(MainRoute.login);
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => WishlistScreen()));
                     },
                     backgroundColor: Colors.pink,
                     child: Text("Wishlist",

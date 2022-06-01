@@ -1,0 +1,5 @@
+mutation AddRating($input: RatingData, $userID: ID!, $productID: ID!) {
+        result:addRating(input: $input, userID: $userID, productID: $productID){
+          title, rate, comment
+        }
+      }

@@ -1,0 +1,1 @@
+mutation RemoveWishlist($id: ID){result:removeWishlist(id: $id)}

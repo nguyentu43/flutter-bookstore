@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bookstore/graphql/mutations/register.req.gql.dart';
 import 'package:flutter_bookstore/helpers/app_service.dart';
 import 'package:flutter_bookstore/helpers/secure_storage.dart';
-import 'package:flutter_bookstore/widgets/components/background.dart';
 import 'package:flutter_bookstore/widgets/components/rounded_button.dart';
+import 'package:flutter_bookstore/widgets/components/top_bar.dart';
 import 'package:form_validator/form_validator.dart';
+import 'package:restart_app/restart_app.dart';
 
 class RegisterScreen extends StatefulWidget {
   RegisterScreen({Key? key}) : super(key: key);
@@ -35,6 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           if (!response.hasErrors) {
             await secureStorage.write(
                 key: "token", value: response.data!.token);
+            Restart.restartApp();
           } else {
             CoolAlert.show(
                 context: context,
@@ -57,84 +59,85 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     return Scaffold(
-        body: Background(
-            type: BackgroundType.center,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+        body: SafeArea(
+          child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+          const TopBar(
+            headerText: "REGISTER",
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10.0, 25.0, 10.0, 0.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  "Register a new account",
+                  style: textTheme.headline1,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      Text(
-                        "Register a new account",
-                        style: textTheme.headline1,
+                      TextFormField(
+                        controller: _fullnameTextController,
+                        validator: ValidationBuilder()
+                            .maxLength(50)
+                            .required()
+                            .build(),
+                        decoration: const InputDecoration(
+                            label: Text("Fullname"),
+                            border: OutlineInputBorder()),
                       ),
-                      SizedBox(
-                        height: 15,
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: _fullnameTextController,
-                              validator: ValidationBuilder()
-                                  .maxLength(50)
-                                  .required()
-                                  .build(),
-                              decoration: InputDecoration(
-                                  label: Text("Fullname"),
-                                  border: OutlineInputBorder()),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextFormField(
-                              controller: _emailTextController,
-                              validator: ValidationBuilder()
-                                  .email()
-                                  .maxLength(50)
-                                  .required()
-                                  .build(),
-                              decoration: InputDecoration(
-                                  label: Text("Email"),
-                                  border: OutlineInputBorder()),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            TextFormField(
-                              controller: _passwordTextController,
-                              obscureText: true,
-                              validator: ValidationBuilder()
-                                  .maxLength(50)
-                                  .required()
-                                  .build(),
-                              decoration: InputDecoration(
-                                  label: Text("Password"),
-                                  border: OutlineInputBorder()),
-                            )
-                          ],
-                        ),
+                      TextFormField(
+                        controller: _emailTextController,
+                        validator: ValidationBuilder()
+                            .email()
+                            .maxLength(50)
+                            .required()
+                            .build(),
+                        decoration: const InputDecoration(
+                            label: Text("Email"), border: OutlineInputBorder()),
                       ),
-                      SizedBox(height: 10),
-                      RoundedButton(
-                        child: Text(
-                          "Register",
-                          style: textTheme.button
-                              ?.merge(TextStyle(color: Colors.white)),
-                        ),
-                        onPressed: () => _processRegister(context),
-                        backgroundColor: Colors.green,
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      TextFormField(
+                        controller: _passwordTextController,
+                        obscureText: true,
+                        validator: ValidationBuilder()
+                            .maxLength(50)
+                            .required()
+                            .build(),
+                        decoration: const InputDecoration(
+                            label: const Text("Password"),
+                            border: OutlineInputBorder()),
                       )
                     ],
-                  ))
-                ],
-              ),
-            )));
+                  ),
+                ),
+                const SizedBox(height: 10),
+                RoundedButton(
+                  child: Text(
+                    "Register",
+                    style:
+                        textTheme.button?.merge(const TextStyle(color: Colors.white)),
+                  ),
+                  onPressed: () => _processRegister(context),
+                  backgroundColor: Colors.green,
+                )
+              ],
+            ),
+          ),
+              ],
+            ),
+        ));
   }
 }
