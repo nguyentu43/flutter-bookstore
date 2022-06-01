@@ -104,15 +104,8 @@ class _MyAppState extends State<MyApp> {
                 headline6: TextStyle(fontSize: 18, color: Colors.black),
               )),
           onGenerateRoute: MainRoute.onGenerateRoute,
-          initialRoute: MainRoute.login,
+          initialRoute: MainRoute.home,
           debugShowCheckedModeBanner: false,
-          // builder: (context, widget) {
-          //   Widget error = Text('...rendering error...');
-          //   if (widget is Scaffold || widget is Navigator)
-          //     error = Scaffold(body: Center(child: error));
-          //   ErrorWidget.builder = (FlutterErrorDetails errorDetails) => error;
-          //   return widget!;
-          // },
           scrollBehavior: CustomScrollBehavior()),
     );
   }

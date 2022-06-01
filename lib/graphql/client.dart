@@ -4,7 +4,7 @@ import 'package:ferry/ferry.dart';
 import 'package:flutter_bookstore/.env.dart';
 
 Client getClient(String? token) {
-  if (token!.isEmpty) {
+  if (token == null) {
     return Client(link: HttpLink(kEndpoint));
   }
   final link =

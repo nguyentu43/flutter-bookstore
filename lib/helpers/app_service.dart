@@ -8,7 +8,6 @@ class AppService {
 
   static Future<AppService> createInstance() async {
     final token = await secureStorage.read(key: "token");
-    print(token);
     final client = getClient(token);
     return AppService._(client, token);
   }
