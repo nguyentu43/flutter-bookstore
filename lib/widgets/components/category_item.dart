@@ -13,6 +13,7 @@ class CategoryItem extends StatelessWidget {
     return MoveToCategory(
       category: category,
       child: Container(
+        padding: const EdgeInsets.all(5),
         margin: EdgeInsets.only(right: right),
         decoration: BoxDecoration(
             color: Colors.orange[400],
@@ -26,6 +27,9 @@ class CategoryItem extends StatelessWidget {
               height: 10,
             ),
             Text(category.name,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
                 style: textTheme.headline5
                     ?.merge(const TextStyle(color: Colors.white)))
           ],
